@@ -1,0 +1,20 @@
+{
+  "name": "mdagostino/MultipleChoiceExams",
+  "description": "A set of PHP Clases to manage multiple choice exams",
+  "keywords": ["exam", "multiple choice"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Mariano D'Agostino",
+      "email": "mariano@cuencodigital.com"
+    }
+  ],
+  "require": {
+  },
+  "require-dev": {
+    "mockery/mockery": "0.9.*@dev"
+  },
+  "autoload": {
+    "psr-0": {"mdagostino": "src/"}
+  }
+}
