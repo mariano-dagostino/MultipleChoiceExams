@@ -107,7 +107,7 @@ class Question {
     $valid_keys = $this->validKeys();
     foreach ($keys as $key) {
       if (!in_array($key, $valid_keys)) {
-        throw new InvalidQuestionException("The key $key is not a valid answer for the question {$this->getTitle()}");
+        throw new InvalidAnswerException("The key $key is not a valid answer for the question {$this->getTitle()}");
       }
     }
 

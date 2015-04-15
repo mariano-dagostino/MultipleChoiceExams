@@ -127,7 +127,7 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @expectedException mdagostino\MultipleChoiceExams\InvalidQuestionException
+   * @expectedException mdagostino\MultipleChoiceExams\InvalidAnswerException
    * @expectedExceptionMessage The key moon is not a valid answer for the question Planets
    */
   public function testInvalidAnswer() {

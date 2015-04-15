@@ -177,6 +177,21 @@ class Exam {
     return $this->questions;
   }
 
+
+  /**
+   * Return the list of questions of this exam.
+   *
+   * @return array
+   * @throws InvalidQuestionException
+   */
+  public function getQuestion($id) {
+    if (!empty($this->questions[$id])) {
+      return $this->questions[$id];
+    }
+    throw new InvalidQuestionException("There is no question with id $id");
+  }
+
+
   /**
    * Defines the questions of this exam.
    * @param  $questions an array of MultipleChoiceExams\Question

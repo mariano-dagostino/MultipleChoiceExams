@@ -105,5 +105,27 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($exam->questionsAnswered(), 0);
   }
 
+  public function testGetSpecificQuestion() {
+    $exam = new Exam();
 
+    // Add ten questions to this exam
+    $questions = array();
+    for ($i = 1; $i <= 10; $i++) {
+      $question = \Mockery::mock('Question');
+      $questions[] = $question;
+    }
+    $exam->setQuestions($questions);
+
+    $this->assertEquals($exam->getQuestion(3), $questions[3]);
+  }
+
+  /**
+   * @expectedException mdagostino\MultipleChoiceExams\InvalidQuestionException
+   * @expectedExceptionMessage There is no question with id 3
+   */
+  public function testGetInvalidQuestion() {
+    $exam = new Exam();
+
+    $this->assertEquals($exam->getQuestion(3), $questions[3]);
+  }
 }
