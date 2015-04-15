@@ -1,5 +1,5 @@
 {
-  "name": "mdagostino/MultipleChoiceExams",
+  "name": "mdagostino/multiplechoiceexams",
   "description": "A set of PHP Clases to manage multiple choice exams",
   "keywords": ["exam", "multiple choice"],
   "license": "MIT",
