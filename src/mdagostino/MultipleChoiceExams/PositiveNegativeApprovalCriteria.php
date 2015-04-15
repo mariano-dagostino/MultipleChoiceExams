@@ -6,7 +6,7 @@ class PositiveNegativeApprovalCriteria extends PositiveApprovalCriteria implemen
 
   public function rulesDescription() {
     $rules = array(
-      'The exam is aproved by anwsering correctly a minimun number of questions.',
+      'The exam is approved by answering correctly a minimum number of questions.',
       'Only right answered questions are considered.',
       'Wrong answered questions are considered minus one.',
       'Unanswered questions are not considered either.'

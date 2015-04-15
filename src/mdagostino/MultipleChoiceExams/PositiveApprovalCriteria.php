@@ -19,7 +19,7 @@ class PositiveApprovalCriteria implements ApprovalCriteriaInterface {
 
   public function rulesDescription() {
     $rules = array(
-      'The exam is aproved by anwsering correctly a minimun number of questions.',
+      'The exam is approved by answering correctly a minimum number of questions.',
       'Only right answered questions are considered.',
       'No penalty for wrong answered questions.',
       'Unanswered questions are not considered either.'
