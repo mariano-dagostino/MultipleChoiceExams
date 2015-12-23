@@ -1,8 +1,7 @@
 #MultipleChoiceExams
 
-The idea of this repository is adapt to different CMS as Drupal, so they only have the responsability of managing the content of the database.
+MultipleChoiceExams is a set of PHP clases to manage Multiple Choice Exams. This clases are able to adapt to different CMS, as Drupal, so the CMS only have the responsability of managing the content of the database.
 
-MultipleChoiceExams is a set of PHP clases to manage Multiple Choice Exams.
 
 #Example
 This is how the code works: 
