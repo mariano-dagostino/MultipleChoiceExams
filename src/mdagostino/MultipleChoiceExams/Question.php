@@ -2,7 +2,7 @@
 
 namespace mdagostino\MultipleChoiceExams;
 
-class Question {
+class Question implements QuestionInterface{
 
   // A short title to resume the Question.
   protected $title;
@@ -47,11 +47,11 @@ class Question {
    * Returns if this question was answered correctly.
    *
    * @return boolean
-   */
+   
   public function isCorrect() {
     return $this->wasAnswered() && $this->correct;
   }
-
+ */
   /**
    * Return in wich percentaje this question was correct. This can be used by
    * some Approval Criterias to create less rigid approval criterias.

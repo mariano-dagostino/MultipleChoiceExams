@@ -2,7 +2,7 @@
 
 namespace mdagostino\MultipleChoiceExams;
 
-class Exam {
+class Exam implements ExamInterface{
 
   // The time available to complete the exam.
   protected $length = 60;
@@ -28,8 +28,7 @@ class Exam {
     if (is_null($criteria)) {
       $this->approval_criteria = new PositiveApprovalCriteria();
     }
-  }
-
+}  
   /**
    * Set the Approval Criteria.
    *

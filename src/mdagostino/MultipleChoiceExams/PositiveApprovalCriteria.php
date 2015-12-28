@@ -14,6 +14,7 @@ class PositiveApprovalCriteria implements ApprovalCriteriaInterface {
     $this->settings = array(
       // By default require 60% of right answered questions to pass this exam
       'approval_percent' => 60,
+      'approval_percent_question'=>80,
     );
   }
 
@@ -31,7 +32,7 @@ class PositiveApprovalCriteria implements ApprovalCriteriaInterface {
     $questions_correctly_answered = 0;
     foreach ($this->questions as $question) {
       if ($question->wasAnswered()) {
-        if ($question->isCorrect()) {
+        if ($question->correctPercent()>= approval_percent_question ) {
           $questions_correctly_answered++;
         }
       }
