@@ -14,7 +14,7 @@ public function reviewLater($review_later);
 
 public function answer($keys);
 
-public function forgotAnswer();
+public function  resetAnswer();
 
 public function validKeys();
 

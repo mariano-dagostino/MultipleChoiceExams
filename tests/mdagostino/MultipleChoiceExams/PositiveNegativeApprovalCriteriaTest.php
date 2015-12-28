@@ -11,7 +11,7 @@ class PositiveNegativeApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
   public function testDefaultSettings() {
     $criteria = new PositiveNegativeApprovalCriteria();
 
-    $this->assertArrayHasKey('approval_percent', $criteria->getSettings());
+    $this->assertArrayHasKey('approval_percent_exam', $criteria->getSettings());
   }
 
   public function testMinimunRequiredQuestions() {
@@ -28,7 +28,7 @@ class PositiveNegativeApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($criteria->questionsRequiredToPass(), 30);
 
     // Now change the settings
-    $criteria->setSettings(array('approval_percent' => 50));
+    $criteria->setSettings(array('approval_percent_exam' => 50));
 
     // Check that 25 questions are required since 25 is the 50% of 50 questions.
     $this->assertEquals($criteria->questionsRequiredToPass(), 25);

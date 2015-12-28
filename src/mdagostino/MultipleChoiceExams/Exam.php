@@ -60,7 +60,7 @@ class Exam implements ExamInterface{
   public function reStart() {
     $this->start();
     foreach ($this->getQuestions() as $question) {
-      $question->forgotAnswer();
+      $question-> resetAnswer();
     }
     return $this;
   }

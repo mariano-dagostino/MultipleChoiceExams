@@ -13,7 +13,7 @@ class PositiveApprovalCriteria implements ApprovalCriteriaInterface {
   public function __construct() {
     $this->settings = array(
       // By default require 60% of right answered questions to pass this exam
-      'approval_percent' => 60,
+      'approval_percent_exam' => 60,
       'approval_percent_question'=>80,
     );
   }
@@ -32,7 +32,7 @@ class PositiveApprovalCriteria implements ApprovalCriteriaInterface {
     $questions_correctly_answered = 0;
     foreach ($this->questions as $question) {
       if ($question->wasAnswered()) {
-        if ($question->correctPercent()>= approval_percent_question ) {
+        if ($question->correctPercent()>= $settings['approval_percent_question'] ) {
           $questions_correctly_answered++;
         }
       }
@@ -63,11 +63,11 @@ class PositiveApprovalCriteria implements ApprovalCriteriaInterface {
       throw new \Exception("There are not defined questions to analyse");
     }
 
-    if (empty($this->settings['approval_percent'])) {
+    if (empty($this->settings['approval_percent_exam'])) {
       throw new Exception("There is no approval percent defined");
     }
 
-    return intval(count($this->questions) * $this->settings['approval_percent'] / 100);
+    return intval(count($this->questions) * $this->settings['approval_percent_exam'] / 100);
   }
 
 }
