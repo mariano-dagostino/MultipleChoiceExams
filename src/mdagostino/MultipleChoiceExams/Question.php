@@ -44,15 +44,6 @@ class Question implements QuestionInterface{
   }
 
   /**
-   * Returns if this question was answered correctly.
-   *
-   * @return boolean
-   
-  public function isCorrect() {
-    return $this->wasAnswered() && $this->correct;
-  }
- */
-  /**
    * Return in wich percentaje this question was correct. This can be used by
    * some Approval Criterias to create less rigid approval criterias.
    *
