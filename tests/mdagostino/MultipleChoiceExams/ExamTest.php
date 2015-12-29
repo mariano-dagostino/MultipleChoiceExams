@@ -95,7 +95,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
     for ($i = 1; $i <= 10; $i++) {
       $question = \Mockery::mock('Question');
 
-      $question->shouldReceive('forgotAnswer')->once();
+      $question->shouldReceive('resetAnswer')->once();
       $question->shouldReceive('wasAnswered')->once();
       $questions[] = $question;
     }
