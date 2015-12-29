@@ -4,43 +4,43 @@ namespace mdagostino\MultipleChoiceExams;
 
 interface QuestionInterface {
 
-public function wasAnswered();
+	public function wasAnswered();
 
-public function correctPercent();
+	public function correctPercent();
 
-public function isMarkedToReviewLater();
+	public function isMarkedToReviewLater();
 
-public function reviewLater($review_later);
+	public function reviewLater($review_later);
 
-public function answer($keys);
+	public function answer($keys);
 
-public function  resetAnswer();
+	public function  resetAnswer();
 
-public function validKeys();
+	public function validKeys();
 
-public function setTitle($title);
+	public function setTitle($title);
 
-public function getTitle();
+	public function getTitle();
 
-public function setInternalId($internal_id);
+	public function setInternalId($internal_id);
 
-public function getInternalId();
+	public function getInternalId();
 
-public function setDescription($description);
+	public function setDescription($description);
 
-public function getDescription();
+	public function getDescription();
 
-public function setTopic($topic);
+	public function setTopic($topic);
 
-public function getTopic();
+	public function getTopic();
 
-public function setAvailableAnswers($answers);
+	public function setAvailableAnswers($answers);
 
-public function getAvailableAnswers();
+	public function getAvailableAnswers();
 
-public function setRightAnswers($answers);
+	public function setRightAnswers($answers);
 
-public function getRightAnswers();
+	public function getRightAnswers();
 
 }
 

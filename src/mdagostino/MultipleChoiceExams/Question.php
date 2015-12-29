@@ -110,7 +110,7 @@ class Question implements QuestionInterface{
   /**
    * Reset the status of this question. This questions was never answered.
    */
-  public function  resetAnswer() {
+  public function resetAnswer() {
     $this->selected_answers = array();
     $this->correct = FALSE;
     $this->review_later = FALSE;

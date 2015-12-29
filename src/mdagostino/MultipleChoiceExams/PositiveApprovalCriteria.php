@@ -14,6 +14,7 @@ class PositiveApprovalCriteria implements ApprovalCriteriaInterface {
     $this->settings = array(
       // By default require 60% of right answered questions to pass this exam
       'approval_percent_exam' => 60,
+      //A question is approved when the 80% of the selected options are right.
       'approval_percent_question' => 80,
     );
   }
