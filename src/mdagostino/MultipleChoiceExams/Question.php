@@ -2,7 +2,7 @@
 
 namespace mdagostino\MultipleChoiceExams;
 
-class Question {
+class Question implements QuestionInterface{
 
   // A short title to resume the Question.
   protected $title;
@@ -41,15 +41,6 @@ class Question {
    */
   public function wasAnswered() {
     return !empty($this->selected_answers);
-  }
-
-  /**
-   * Returns if this question was answered correctly.
-   *
-   * @return boolean
-   */
-  public function isCorrect() {
-    return $this->wasAnswered() && $this->correct;
   }
 
   /**
@@ -119,7 +110,7 @@ class Question {
   /**
    * Reset the status of this question. This questions was never answered.
    */
-  public function forgotAnswer() {
+  public function resetAnswer() {
     $this->selected_answers = array();
     $this->correct = FALSE;
     $this->review_later = FALSE;

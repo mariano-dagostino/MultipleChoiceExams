@@ -73,44 +73,44 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     $math_question = $this->single_choice_question;
 
     // At the begining the question is not correct by default
-    $this->assertFalse($math_question->isCorrect());
+    $this->assertEquals($math_question->correctPercent(), 0);
     // Also it should not be already answered
     $this->assertFalse($math_question->wasAnswered());
 
     // Wrong answer
     $math_question->answer(array(5));
-    $this->assertFalse($math_question->isCorrect());
+    $this->assertEquals($math_question->correctPercent(), 0);
     $this->assertTrue($math_question->wasAnswered());
 
     // Correct answer
     $math_question->answer(array(2));
-    $this->assertTrue($math_question->isCorrect());
+    $this->assertEquals($math_question->correctPercent(), 100);
 
 
     $planet_question = $this->multiple_choice_question;
 
     // At the begining the question is not correct by default
-    $this->assertFalse($planet_question->isCorrect());
+    $this->assertEquals($planet_question->correctPercent(), 0);
     // Also it should not be already answered
     $this->assertFalse($planet_question->wasAnswered());
 
     $planet_question->answer(array('jupiter'));
-    $this->assertFalse($planet_question->isCorrect());
+    $this->assertEquals($planet_question->correctPercent(), 0);
     $this->assertTrue($planet_question->wasAnswered());
 
     // Only one answer make the Question incorrect
     $planet_question->answer(array('mercury'));
-    $this->assertFalse($planet_question->isCorrect());
+    $this->assertEquals($planet_question->correctPercent(), 50);
 
     $planet_question->answer(array('mercury', 'venus'));
-    $this->assertTrue($planet_question->isCorrect());
+    $this->assertEquals($planet_question->correctPercent(), 100);
 
     // Try with different order
     $planet_question->answer(array('venus', 'mercury'));
-    $this->assertTrue($planet_question->isCorrect());
+    $this->assertEquals($planet_question->correctPercent(), 100);
   }
 
-  public function testForgotAnswer() {
+  public function testResetAnswer() {
     $planet_question = $this->multiple_choice_question;
 
     $this->assertFalse($planet_question->wasAnswered());
@@ -118,12 +118,12 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     $planet_question->answer(array('mercury', 'venus'));
 
     $this->assertTrue($planet_question->wasAnswered());
-    $this->assertTrue($planet_question->isCorrect());
+    $this->assertEquals($planet_question->correctPercent(), 100);
 
-    $planet_question->forgotAnswer();
+    $planet_question->resetAnswer();
 
     $this->assertFalse($planet_question->wasAnswered());
-    $this->assertFalse($planet_question->isCorrect());
+    $this->assertEquals($planet_question->correctPercent(), 0);
   }
 
   /**

@@ -11,7 +11,7 @@ class PositiveApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
   public function testDefaultSettings() {
     $criteria = new PositiveApprovalCriteria();
 
-    $this->assertArrayHasKey('approval_percent', $criteria->getSettings());
+    $this->assertArrayHasKey('approval_percent_exam', $criteria->getSettings());
   }
 
   public function testMinimunRequiredQuestions() {
@@ -28,7 +28,7 @@ class PositiveApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($criteria->questionsRequiredToPass(), 30);
 
     // Now change the settings
-    $criteria->setSettings(array('approval_percent' => 50));
+    $criteria->setSettings(array('approval_percent_exam' => 50));
 
     // Check that 25 questions are required since 25 is the 50% of 50 questions.
     $this->assertEquals($criteria->questionsRequiredToPass(), 25);
@@ -43,7 +43,7 @@ class PositiveApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
       $question = \Mockery::mock('Question');
       // Answer correctly only 29 questions. 30 questions are required to pass
       $question->shouldReceive('wasAnswered')->andReturn(TRUE);
-      $question->shouldReceive('isCorrect')->once()->andReturn($i < 29);
+      $question->shouldReceive('correctPercent')->andReturn($i < 28 ? 100 : 0 );
       $questions[] = $question;
     }
     $criteria->setQuestions($questions);
@@ -61,7 +61,7 @@ class PositiveApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
       $question = \Mockery::mock('Question');
       // Answer correcty the last 40 questions
       $question->shouldReceive('wasAnswered')->andReturn(TRUE);
-      $question->shouldReceive('isCorrect')->once()->andReturn($i >= 10);
+      $question->shouldReceive('correctPercent')->andReturn($i > 9 ? 100 : 0);
       $questions[] = $question;
     }
     $criteria->setQuestions($questions);
@@ -79,7 +79,7 @@ class PositiveApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
       $question = \Mockery::mock('Question');
       // Answer correcty the last 30 questions
       $question->shouldReceive('wasAnswered')->andReturn(TRUE);
-      $question->shouldReceive('isCorrect')->once()->andReturn($i >= 20);
+      $question->shouldReceive('correctPercent')->andReturn($i < 20 ? 0 : 100);
       $questions[] = $question;
     }
     $criteria->setQuestions($questions);
@@ -98,7 +98,7 @@ class PositiveApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
       // Do not answer the first 20 answers
       $question->shouldReceive('wasAnswered')->andReturn($i >= 20);
       // Answer correcty the last 30 questions
-      $question->shouldReceive('isCorrect')->andReturn($i >= 20);
+      $question->shouldReceive('correctPercent')->andReturn($i < 20 ? 0 : 100);
       $questions[] = $question;
     }
     $criteria->setQuestions($questions);

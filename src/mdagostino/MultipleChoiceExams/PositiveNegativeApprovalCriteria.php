@@ -18,7 +18,7 @@ class PositiveNegativeApprovalCriteria extends PositiveApprovalCriteria implemen
     $questions_correctly_answered = 0;
     foreach ($this->questions as $question) {
       if ($question->wasAnswered()) {
-        if ($question->isCorrect()) {
+        if ($question->correctPercent()==100) {
           $questions_correctly_answered++;
         }
         else {
