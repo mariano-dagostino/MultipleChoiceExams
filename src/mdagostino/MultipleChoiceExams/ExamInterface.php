@@ -38,4 +38,6 @@ interface ExamInterface {
 
 	public function setDuration($duration);
 
+	public function setTimer($time);
+
 }

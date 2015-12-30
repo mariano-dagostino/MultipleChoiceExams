@@ -234,7 +234,6 @@ class Exam implements ExamInterface{
   /**
    * Defines a period of time between the .
   */
-
   public function setTimer($time) {
     $this->timer = $time;
     return $this;
