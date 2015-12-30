@@ -5,7 +5,7 @@ namespace mdagostino\MultipleChoiceExams;
 class Exam implements ExamInterface{
 
   // The time available to complete the exam.
-  protected $length = 60;
+  protected $duration = 60;
 
   // Boolean, if TRUE the exam has started.
   protected $started = FALSE;
@@ -24,10 +24,13 @@ class Exam implements ExamInterface{
 
   protected $approval_criteria = NULL;
 
+  protected $timer = NULL;
+
   public function __construct(ApprovalCriteriaInterface $criteria = NULL) {
     if (is_null($criteria)) {
       $this->approval_criteria = new PositiveApprovalCriteria();
     }
+    $this->timer = new ExamTimer(); 
 }  
   /**
    * Set the Approval Criteria.
@@ -47,7 +50,7 @@ class Exam implements ExamInterface{
    * Start the exam.
    */
   public function start() {
-    $this->started_time = time();
+    $this->started_time = $this->timer->getTime();
     $this->started = TRUE;
     $this->finished = FALSE;
     $this->pass = FALSE;
@@ -65,12 +68,18 @@ class Exam implements ExamInterface{
     return $this;
   }
 
-
+  
   /**
    * Return the amount of seconds available to finish this exam.
    */
-  public function ramainingTime() {
-    return time() - $this->started_time;
+  public function remainingTime() {
+
+    if ($this->started_time + $this->duration *60 - $this->timer->getTime() < 0) {
+      return 0;
+    }
+    else {
+      return $this->started_time + $this->duration *60 - $this->timer->getTime() ;
+    }  
   }
 
   /**
@@ -82,13 +91,20 @@ class Exam implements ExamInterface{
    *   An array of question options keys that represent the answer of the user.
    */
   public function answerQuestion($question_id, $answer) {
-    if (!empty($this->questions[$question_id])) {
-      $this->questions[$question_id]->answer($answer);
+    
+    if ($this->remainingTime() > 0){ 
+      if (!empty($this->questions[$question_id])) {
+        $this->questions[$question_id]->answer($answer);
+      }
+      else {
+        throw new ExceptionInvalidQuestion("There is no questions with the id $questionId");
+      }
+      return $this; 
     }
-    else {
-      throw new ExceptionInvalidQuestion("There is no questions with the id $questionId");
+    else{
+      throw new ExpiredTimeException("There is no time left for the next question");
     }
-    return $this;
+
   }
 
 
@@ -176,7 +192,6 @@ class Exam implements ExamInterface{
     return $this->questions;
   }
 
-
   /**
    * Return the list of questions of this exam.
    *
@@ -189,7 +204,6 @@ class Exam implements ExamInterface{
     }
     throw new InvalidQuestionException("There is no question with id $id");
   }
-
 
   /**
    * Defines the questions of this exam.
@@ -208,4 +222,22 @@ class Exam implements ExamInterface{
   public function totalQuestions() {
     return count($this->questions);
   }
+  
+  /**
+   * Defines the duration of the exam in minutes.
+  */
+  public function setDuration($duration) {
+    $this->duration = $duration;
+    return $this;
+  }
+
+  /**
+   * Defines a period of time between the .
+  */
+
+  public function setTimer($time) {
+    $this->timer = $time;
+    return $this;
+  }
+
 }

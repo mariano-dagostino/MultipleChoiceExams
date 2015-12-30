@@ -10,6 +10,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
 
   public function testExamCreation() {
     $exam = new Exam();
+
     $this->assertEquals($exam->questionsAnswered(), 0);
     $this->assertEquals($exam->totalQuestions(), 0);
 
@@ -60,6 +61,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
 
   public function testExamQuestionAnswering() {
     $exam = new Exam();
+    $exam->start();
 
     // Add ten questions to this exam
     $questions = array();
@@ -128,4 +130,29 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals($exam->getQuestion(3), $questions[3]);
   }
+
+  public function testDuration() {
+    $exam = new Exam();
+
+    $duration = 80;
+    $exam->setDuration($duration);
+    $exam->start();
+
+    $this->assertEquals($exam->remainingTime(), $duration*60);   
+  }
+/*
+  public function testTimeLeft(){
+    $exam = new Exam();
+    $exam->start();
+
+    $examTimer = \Mockery::mock('ExamTimer');
+    $examTimer->shouldReceive('getTime')->andReturn(0,10,20,30,40,50);
+
+    $this->assertEquals($examTimer->getTime(), 0);    
+    $this->assertEquals($examTimer->getTime(), 10);    
+    $this->assertEquals($examTimer->getTime(), 20);    
+    $this->assertEquals($examTimer->getTime(), 30);    
+    $this->assertEquals($examTimer->getTime(), 40);
+    $this->assertEquals($examTimer->getTime(), 50);    
+  }*/
 }
