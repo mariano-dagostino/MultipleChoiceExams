@@ -14,7 +14,7 @@ interface ExamInterface {
 
 	public function reStart();
 
-	public function ramainingTime();
+	public function remainingTime();
 
 	public function answerQuestion($question_id, $answer);
 
@@ -35,5 +35,9 @@ interface ExamInterface {
 	public function setQuestions($questions); 
 
 	public function totalQuestions();
+
+	public function setDuration($duration);
+
+	public function setTimer($time);
 
 }
