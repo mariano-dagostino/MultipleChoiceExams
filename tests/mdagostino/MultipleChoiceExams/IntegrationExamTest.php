@@ -11,7 +11,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
     $exam->setDuration(30);
 
     $examTimer = \Mockery::mock('ExamTimer');
-    // The time is in seconds
+    // The time is in seconds, 30 minutes are 1800 seconds.
     $examTimer->shouldReceive('getTime')->andReturn(0, 1000, 1600);
 
     $exam->setTimer($examTimer);
@@ -77,7 +77,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @expectedException mdagostino\MultipleChoiceExams\ExpiredTimeException
-   * @expectedExceptionMessage There is no time left for the next question
+   * @expectedExceptionMessage There is no left time to complete the exam.
    */
   public function testTimeLeftNegative() {
 
@@ -88,7 +88,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
       $exam->setDuration(30);
 
       $examTimer = \Mockery::mock('ExamTimer');
-      // The time is in seconds
+      // The time is in seconds, 30 minutes are 1800 seconds.
       $examTimer->shouldReceive('getTime')->andReturn(0, 1000, 1769, 1801);
 
       $exam->setTimer($examTimer);
@@ -124,7 +124,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @expectedException mdagostino\MultipleChoiceExams\ExpiredTimeException
-   * @expectedExceptionMessage There is no time left for the next question
+   * @expectedExceptionMessage There is no left time to complete the exam.
    */
   public function testTimeLeftZero() {
 
@@ -135,7 +135,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
       $exam->setDuration(30);
 
       $examTimer = \Mockery::mock('ExamTimer');
-      // The time is in seconds
+      // The time is in seconds, 30 minutes are 1800 seconds.
       $examTimer->shouldReceive('getTime')->andReturn(0, 1000, 1800);
 
       $exam->setTimer($examTimer);

@@ -4,7 +4,7 @@ namespace mdagostino\MultipleChoiceExams;
 
 class Exam implements ExamInterface{
 
-  // The time available to complete the exam.
+  // The time available to complete the exam in minutes.
   protected $duration = 60;
 
   // Boolean, if TRUE the exam has started.
@@ -24,6 +24,7 @@ class Exam implements ExamInterface{
 
   protected $approval_criteria = NULL;
 
+  //An intance of ExamTimer. It indicates the current time.  
   protected $timer = NULL;
 
   public function __construct(ApprovalCriteriaInterface $criteria = NULL) {
@@ -74,11 +75,11 @@ class Exam implements ExamInterface{
    */
   public function remainingTime() {
 
-    if ($this->started_time + $this->duration *60 - $this->timer->getTime() < 0) {
+    if ($this->started_time + $this->duration * 60 - $this->timer->getTime() < 0) {
       return 0;
     }
     else {
-      return $this->started_time + $this->duration *60 - $this->timer->getTime() ;
+      return $this->started_time + $this->duration * 60 - $this->timer->getTime() ;
     }  
   }
 
@@ -90,9 +91,8 @@ class Exam implements ExamInterface{
    * @param  array $answer
    *   An array of question options keys that represent the answer of the user.
    */
-  public function answerQuestion($question_id, $answer) {
-    
-    if ($this->remainingTime() > 0){ 
+  public function answerQuestion($question_id, $answer) { 
+    if ($this->remainingTime() > 0) { 
       if (!empty($this->questions[$question_id])) {
         $this->questions[$question_id]->answer($answer);
       }
@@ -102,9 +102,8 @@ class Exam implements ExamInterface{
       return $this; 
     }
     else{
-      throw new ExpiredTimeException("There is no time left for the next question");
+      throw new ExpiredTimeException(" There is no left time to complete the exam.");
     }
-
   }
 
 
