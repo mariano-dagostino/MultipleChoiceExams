@@ -77,4 +77,21 @@ class ExamController implements ExamControllerInterface {
     return $this->counter + 1;
   }
 
+  public function isFirstQuestion(){
+    if($this->counter == 0){
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  public function isLastQuestion(){
+    if ($this->counter == $this->total_questions - 1) {
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
+  }
 }

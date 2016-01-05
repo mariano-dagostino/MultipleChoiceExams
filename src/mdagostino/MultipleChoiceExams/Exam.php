@@ -92,6 +92,10 @@ class Exam implements ExamInterface{
    *   An array of question options keys that represent the answer of the user.
    */
   public function answerQuestion($question_id, $answer) { 
+    if (!is_array($answer)){
+      $answer = array($answer);
+    }
+
     if ($this->remainingTime() > 0) { 
       if (!empty($this->questions[$question_id])) {
         $this->questions[$question_id]->answer($answer);
