@@ -202,4 +202,7 @@ class Question implements QuestionInterface{
     return $this->right_answers;
   }
 
+  public function getSelectedAnswers() {
+    return $this->selected_answers;
+  }
 }
