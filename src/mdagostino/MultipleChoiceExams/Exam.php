@@ -79,7 +79,7 @@ class Exam implements ExamInterface{
       return 0;
     }
     else {
-      return $this->started_time - 30 + $this->duration * 60 - $this->timer->getTime() ;
+      return $this->started_time + $this->duration * 60 - $this->timer->getTime() ;
     }  
   }
 
@@ -95,7 +95,7 @@ class Exam implements ExamInterface{
     if (!is_array($answer)){
       $answer = array($answer);
     }
-    dsm($answer);
+
     if ($this->remainingTime() > 0) { 
       if (!empty($this->questions[$question_id])) {
         $this->questions[$question_id]->answer($answer);
