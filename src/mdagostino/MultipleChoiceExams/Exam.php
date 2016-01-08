@@ -246,5 +246,9 @@ class Exam implements ExamInterface{
     return $this->finished;
   }
 
+  // Returns true when the answer is correct, else false
 
+  public function isCorrectQuestion($question){
+    return $this->approval_criteria->isCorrect($question);
+  } 
 }
