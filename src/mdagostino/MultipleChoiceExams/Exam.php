@@ -152,7 +152,7 @@ class Exam implements ExamInterface{
    */
   public function finalize() {
     if ($this->finished) {
-      throw new Exception("This exam has already been finished.");
+      throw new Exception ("This exam has already been finished.");
     }
 
     $this->approval_criteria->setQuestions($this->getQuestions());
@@ -241,5 +241,10 @@ class Exam implements ExamInterface{
     $this->timer = $time;
     return $this;
   }
+
+  public function isFinished() {
+    return $this->finished;
+  }
+
 
 }
