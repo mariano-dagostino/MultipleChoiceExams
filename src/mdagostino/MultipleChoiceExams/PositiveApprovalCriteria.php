@@ -28,17 +28,27 @@ class PositiveApprovalCriteria implements ApprovalCriteriaInterface {
     );
     return $rules;
   }
+  // Returns true if the question is approved, else false. 
+
+  public function isCorrect($question){
+    if ($question->wasAnswered()) {
+        if ($question->correctPercent() >= $this->settings['approval_percent_question']) {
+          return TRUE;
+        }
+        else {
+          return FALSE;
+        }
+  }
+}
 
   public function pass() {
     $questions_correctly_answered = 0;
     foreach ($this->questions as $question) {
-      if ($question->wasAnswered()) {
-        if ($question->correctPercent() >= $this->settings['approval_percent_question']) {
+      if ($this->isCorrect($question) == TRUE) {
           $questions_correctly_answered++;
         }
       }
-    }
-
+      
     if ($questions_correctly_answered >= $this->questionsRequiredToPass()) {
       return TRUE;
     }
