@@ -1,6 +1,6 @@
 <?php
 
-namespace mdagostino\MultipleChoiceExams;
+namespace mdagostino\MultipleChoiceExams\ApprovalCriteria;
 
 class PositiveNegativeApprovalCriteria extends PositiveApprovalCriteria implements ApprovalCriteriaInterface {
 
@@ -14,11 +14,12 @@ class PositiveNegativeApprovalCriteria extends PositiveApprovalCriteria implemen
     return $rules;
   }
 
-  public function pass() {
+  public function pass(array $questions) {
+    $this->questions = $questions;
     $questions_correctly_answered = 0;
     foreach ($this->questions as $question) {
       if ($question->wasAnswered()) {
-        if ($question->correctPercent()==100) {
+        if ($question->isCorrect()) {
           $questions_correctly_answered++;
         }
         else {

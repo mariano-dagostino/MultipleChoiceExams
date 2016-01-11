@@ -2,6 +2,8 @@
 
 namespace mdagostino\MultipleChoiceExams;
 
+use mdagostino\MultipleChoiceExams\Exam\ExamWithTimeController;
+
 class ExamControllerTest extends \PHPUnit_Framework_TestCase {
 
   protected $exam;
@@ -20,33 +22,37 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
       $this->questions[] = $question;
     }
 
-    $this->exam = \Mockery::mock('Exam');
-    $this->exam
+    $this->examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
+
+    $this->examTimer
     ->shouldReceive('start')->once()
+    ->shouldReceive('stillHasTime')->andReturn(TRUE);
+
+    $this->exam = \Mockery::mock('mdagostino\MultipleChoiceExams\Exam\ExamInterface');
+    $this->exam
     ->shouldReceive('getQuestion')
     ->andReturnUsing(function($argument) {
         return $this->questions[$argument];
     })
-    ->shouldReceive('finish')
-    ->shouldReceive('markToReviewLater')
-    ->andReturnUsing(function($question_id, $argument) {
-        return $this->questions[$question_id]->reviewLater($argument);
-    })
+    ->shouldReceive('isApproved')->andReturn(TRUE)
     ->shouldReceive('getCurrentQuestion')->andReturn(\Mockery::mock('Question'))
     ->shouldReceive('totalQuestions')->andReturn(count($this->questions));
   }
 
   public function testExamControlerCreation() {
-    $controller = new ExamController();
-    $controller->startExam($this->exam);
+    $controller = new ExamWithTimeController($this->exam);
+    $controller->setTimer($this->examTimer);
+    $controller->startExam();
     $this->assertEquals($controller->getCurrentQuestionCount(), 1, "The first question is numbered with 1");
     $this->assertEquals($controller->getQuestionCount(), 10, "The are 10 questions in the current exam");
-    $this->assertEquals($controller->getCurrentExam(), $this->exam);
+    $this->assertEquals($controller->getExam(), $this->exam);
   }
 
+
   public function testExamControllerQuestionNavigation() {
-    $controller = new ExamController();
-    $controller->startExam($this->exam);
+    $controller = new ExamWithTimeController($this->exam);
+    $controller->setTimer($this->examTimer);
+    $controller->startExam();
     $this->assertEquals($controller->getCurrentQuestionCount(), 1, "The first question is numbered with 1");
 
     $controller->moveToNextQuestion();
@@ -73,8 +79,9 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testGetCurrentQuestion() {
-    $controller = new ExamController();
-    $controller->startExam($this->exam);
+    $controller = new ExamWithTimeController($this->exam);
+    $controller->setTimer($this->examTimer);
+    $controller->startExam();
     $this->assertEquals($controller->getCurrentQuestion(), $this->questions[0]);
 
     $controller->moveToNextQuestion();
@@ -85,7 +92,8 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testReviewQuestionsLater() {
-    $controller = new ExamController();
+    $controller = new ExamWithTimeController($this->exam);
+    $controller->setTimer($this->examTimer);
 
     $first_question = \Mockery::mock('Question');
     $first_question->shouldReceive('reviewLater')->with(TRUE);
@@ -94,7 +102,7 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
     $second_question->shouldReceive('reviewLater')->with(FALSE);
     $this->questions = array($first_question, $second_question);
 
-    $controller->startExam($this->exam);
+    $controller->startExam();
 
     // Mark the first question to be reviewed later
     $controller->markCurrentQuestionForLaterReview();
@@ -105,13 +113,13 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testFinalizeExam() {
-    $controller = new ExamController();
+    $controller = new ExamWithTimeController($this->exam);
+    $controller->setTimer($this->examTimer);
 
-    $this->exam->shouldReceive('finalize')->once();
-
-    $controller->startExam($this->exam);
+    $controller->startExam();
     $controller->finalizeExam();
   }
 
 
 }
+

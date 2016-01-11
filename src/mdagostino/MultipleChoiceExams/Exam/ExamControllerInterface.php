@@ -1,10 +1,12 @@
 <?php
 
-namespace mdagostino\MultipleChoiceExams;
+namespace mdagostino\MultipleChoiceExams\Exam;
 
 interface ExamControllerInterface {
 
-  public function startExam($exam);
+  public function __construct(ExamInterface $exam);
+
+  public function startExam();
 
   public function finalizeExam();
 
@@ -20,7 +22,9 @@ interface ExamControllerInterface {
 
   public function unmarkCurrentQuestionForLaterReview();
 
-  public function getCurrentExam();
+  public function hasQuestionsToReview();
+
+  public function getExam();
 
   public function getCurrentQuestion();
 

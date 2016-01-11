@@ -1,5 +1,5 @@
 <?php
 
-namespace mdagostino\MultipleChoiceExams;
+namespace mdagostino\MultipleChoiceExams\Exception;
 
 class InvalidQuestionException extends \Exception {}

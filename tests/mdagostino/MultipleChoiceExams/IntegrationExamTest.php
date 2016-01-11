@@ -2,170 +2,170 @@
 
 namespace mdagostino\MultipleChoiceExams;
 
+use mdagostino\MultipleChoiceExams\Exam\Exam;
+use mdagostino\MultipleChoiceExams\Exam\ExamWithTimeController;
+use mdagostino\MultipleChoiceExams\Question\Question;
+use mdagostino\MultipleChoiceExams\Timer\ExamTimer;
+use mdagostino\MultipleChoiceExams\Question\QuestionInfo;
+use mdagostino\MultipleChoiceExams\Question\QuestionEvaluatorSimple;
+use mdagostino\MultipleChoiceExams\ApprovalCriteria\PositiveApprovalCriteria;
+
 class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
 
   public function testExamBasicWorkflow() {
 
-    $exam = new Exam();
+    $approval_criteria = new PositiveApprovalCriteria();
+    $exam = new Exam($approval_criteria);
 
-    $exam->setDuration(30);
+    $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
 
-    $examTimer = \Mockery::mock('ExamTimer');
     // The time is in seconds, 30 minutes are 1800 seconds.
-    $examTimer->shouldReceive('getTime')->andReturn(0, 1000, 1600);
+    $examTimer
+    ->shouldReceive('start')->once()
+    ->shouldReceive('stillHasTime')->andReturn(TRUE)
+    ->shouldReceive('getTime')->andReturn(1);
 
-    $exam->setTimer($examTimer);
 
+    $question_evaluator = new QuestionEvaluatorSimple();
     for ($i=0; $i < 100; $i++) {
 
-      $available_answers = array('one', 'two', 'three');
+      $available_answers = array(
+       'one' => 'One',
+       'two' => 'Two',
+       'three' => 'Three'
+      );
       $right_answers = array('one', 'three');
 
-      $question = new Question();
+      $question_info = new QuestionInfo();
+      $question = new Question($question_evaluator, $question_info);
       $question
-        ->setTitle('Question ' . $i)
-        ->setDescription('Description for question ' . $i)
-        ->setAvailableAnswers($available_answers)
-        ->setRightAnswers($right_answers);
+        ->setAnswers($available_answers, $right_answers)
+        ->getInfo()
+          ->setTitle('Question ' . $i)
+          ->setDescription('Description for question ' . $i);
 
       $questions[] = $question;
     }
     $exam->setQuestions($questions);
 
-    $exam->start();
+    $controller = new ExamWithTimeController($exam);
+    $controller->setTimer($examTimer);
+    $controller->startExam();
 
-    $exam->answerQuestion(0, array('one'));
-    $exam->answerQuestion(1, array('one', 'two'));
-    $exam->answerQuestion(3, array('one', 'three'));
+    $controller->answerCurrentQuestion(array('one'));
+    $controller->moveToNextQuestion();
+    $controller->answerCurrentQuestion(array('one', 'two'));
+    $controller->moveToNextQuestion();
+    $controller->answerCurrentQuestion(array('one', 'three'));
+    $controller->moveToNextQuestion();
 
-    $exam->finalize();
+    $controller->finalizeExam();
 
-    $this->assertFalse($exam->isApproved());
+    $this->assertFalse($controller->getExam()->isApproved());
   }
 
   public function testExamApproved() {
+    $approval_criteria = new PositiveApprovalCriteria();
+    $exam = new Exam($approval_criteria);
 
-    $exam = new Exam();
+    $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
 
+    $examTimer
+    ->shouldReceive('start')->once()
+    ->shouldReceive('stillHasTime')->andReturn(TRUE)
+    ->shouldReceive('getTime')->andReturn(1);
+
+    $question_evaluator = new QuestionEvaluatorSimple();
     for ($i=0; $i < 100; $i++) {
 
-      $available_answers = array('one', 'two', 'three');
+      $available_answers = array(
+       'one' => 'One',
+       'two' => 'Two',
+       'three' => 'Three'
+      );
       $right_answers = array('one', 'three');
 
-      $question = new Question();
+      $question_info = new QuestionInfo();
+      $question = new Question($question_evaluator, $question_info);
       $question
-        ->setTitle('Question ' . $i)
-        ->setDescription('Description for question ' . $i)
-        ->setAvailableAnswers($available_answers)
-        ->setRightAnswers($right_answers);
+        ->setAnswers($available_answers, $right_answers)
+        ->getInfo()
+          ->setTitle('Question ' . $i)
+          ->setDescription('Description for question ' . $i);
 
       $questions[] = $question;
     }
     $exam->setQuestions($questions);
 
-    $exam->start();
+    $controller = new ExamWithTimeController($exam);
+    $controller->setTimer($examTimer);
+    $controller->startExam();
+
 
     // Answer correctly 70% of the answers
-    for ($i=0; $i < 70; $i++) {
-      $exam->answerQuestion($i, array('one', 'three'));
+    for ($i = 0; $i < 70; $i++) {
+      $this->assertFalse($controller->getCurrentQuestion()->wasAnswered());
+      $controller->answerCurrentQuestion(array('one', 'three'));
+      $this->assertTrue($controller->getCurrentQuestion()->wasAnswered());
+      $controller->moveToNextQuestion();
     }
 
-    $exam->finalize();
+    $controller->finalizeExam();
 
-    $this->assertTrue($exam->isApproved());
+    $this->assertTrue($controller->getExam()->isApproved());
   }
 
   /**
-   * @expectedException mdagostino\MultipleChoiceExams\ExpiredTimeException
+   * @expectedException mdagostino\MultipleChoiceExams\Exception\ExpiredTimeException
    * @expectedExceptionMessage There is no left time to complete the exam.
    */
-  public function testTimeLeftNegative() {
+  public function testNoMoreTime() {
+    $approval_criteria = new PositiveApprovalCriteria();
+    $exam = new Exam($approval_criteria);
 
-      // This test checks if the questions are not available to be answered  
-      // when the time to complete the exam is over the duration of the exam.
-      $exam = new Exam();
+    $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
 
-      $exam->setDuration(30);
+    $examTimer
+    ->shouldReceive('start')->once()
+    ->shouldReceive('stillHasTime')->andReturn(TRUE, TRUE, TRUE, FALSE);
 
-      $examTimer = \Mockery::mock('ExamTimer');
-      // The time is in seconds, 30 minutes are 1800 seconds.
-      $examTimer->shouldReceive('getTime')->andReturn(0, 1000, 1769, 1801);
+    $question_evaluator = new QuestionEvaluatorSimple();
+    for ($i=0; $i < 100; $i++) {
 
-      $exam->setTimer($examTimer);
+      $available_answers = array(
+       'one' => 'One',
+       'two' => 'Two',
+       'three' => 'Three'
+      );
+      $right_answers = array('one', 'three');
 
-      for ($i=0; $i < 10; $i++) {
-
-        $available_answers = array('one', 'two', 'three');
-        $right_answers = array('one', 'three');
-
-        $question = new Question();
-        $question
+      $question_info = new QuestionInfo();
+      $question = new Question($question_evaluator, $question_info);
+      $question
+        ->setAnswers($available_answers, $right_answers)
+        ->getInfo()
           ->setTitle('Question ' . $i)
-          ->setDescription('Description for question ' . $i)
-          ->setAvailableAnswers($available_answers)
-          ->setRightAnswers($right_answers);
+          ->setDescription('Description for question ' . $i);
 
-        $questions[] = $question;
-      }
-      $exam->setQuestions($questions);
+      $questions[] = $question;
+    }
+    $exam->setQuestions($questions);
 
-      $exam->start();
+    $controller = new ExamWithTimeController($exam);
+    $controller->setTimer($examTimer);
+    $controller->startExam();
 
-      $exam->answerQuestion(0, array('one'));
-      $exam->answerQuestion(1, array('one', 'two'));
-      $exam->answerQuestion(2, array('one', 'three'));
-      $exam->answerQuestion(3, array('one', 'three'));
 
-      $exam->finalize();
-
-      $this->assertFalse($exam->isApproved());
-
+    // Answer correctly 70% of the answers
+    for ($i=0; $i < 70; $i++) {
+      $controller->answerCurrentQuestion(array('one', 'three'));
+      $controller->moveToNextQuestion();
     }
 
-  /**
-   * @expectedException mdagostino\MultipleChoiceExams\ExpiredTimeException
-   * @expectedExceptionMessage There is no left time to complete the exam.
-   */
-  public function testTimeLeftZero() {
+    $controller->finalizeExam();
 
-      // This test checks if the questions are not available to be answered 
-      // when the time to complete the exam is exactly the duration of the exam.
-      $exam = new Exam();
+    $this->assertTrue($controller->getExam()->isApproved());
+  }
 
-      $exam->setDuration(30);
-
-      $examTimer = \Mockery::mock('ExamTimer');
-      // The time is in seconds, 30 minutes are 1800 seconds.
-      $examTimer->shouldReceive('getTime')->andReturn(0, 1000, 1800);
-
-      $exam->setTimer($examTimer);
-
-      for ($i=0; $i < 10; $i++) {
-
-        $available_answers = array('one', 'two', 'three');
-        $right_answers = array('one', 'three');
-
-        $question = new Question();
-        $question
-          ->setTitle('Question ' . $i)
-          ->setDescription('Description for question ' . $i)
-          ->setAvailableAnswers($available_answers)
-          ->setRightAnswers($right_answers);
-
-        $questions[] = $question;
-      }
-      $exam->setQuestions($questions);
-
-      $exam->start();
-
-      $exam->answerQuestion(0, array('one'));
-      $exam->answerQuestion(1, array('one', 'two'));
-      $exam->answerQuestion(2, array('one', 'three'));
-
-      $exam->finalize();
-
-      $this->assertFalse($exam->isApproved());
-
-    }  
-  
 }
+

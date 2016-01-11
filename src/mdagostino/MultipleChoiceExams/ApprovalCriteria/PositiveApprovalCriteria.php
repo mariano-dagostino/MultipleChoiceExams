@@ -1,6 +1,6 @@
 <?php
 
-namespace mdagostino\MultipleChoiceExams;
+namespace mdagostino\MultipleChoiceExams\ApprovalCriteria;
 
 class PositiveApprovalCriteria implements ApprovalCriteriaInterface {
 
@@ -28,9 +28,9 @@ class PositiveApprovalCriteria implements ApprovalCriteriaInterface {
     );
     return $rules;
   }
-  // Returns true if the question is approved, else false. 
+  // Returns true if the question is approved, else false.
 
-  public function isCorrect($question){
+  protected function isCorrect($question){
     if ($question->wasAnswered()) {
         if ($question->correctPercent() >= $this->settings['approval_percent_question']) {
           return TRUE;
@@ -41,23 +41,17 @@ class PositiveApprovalCriteria implements ApprovalCriteriaInterface {
   }
 }
 
-  public function pass() {
+  public function pass(array $questions) {
+    $this->questions = $questions;
+
     $questions_correctly_answered = 0;
     foreach ($this->questions as $question) {
-      if ($this->isCorrect($question) == TRUE) {
+      if ($question->isCorrect($question)) {
           $questions_correctly_answered++;
         }
       }
-      
-    if ($questions_correctly_answered >= $this->questionsRequiredToPass()) {
-      return TRUE;
-    }
-    return FALSE;
-  }
 
-  public function setQuestions($questions) {
-    $this->questions = $questions;
-    return $this;
+    return $questions_correctly_answered >= $this->questionsRequiredToPass();
   }
 
   public function setSettings($settings = array()) {
@@ -67,6 +61,11 @@ class PositiveApprovalCriteria implements ApprovalCriteriaInterface {
 
   public function getSettings() {
     return $this->settings;
+  }
+
+  public function setQuestions(array $questions) {
+    $this->questions = $questions;
+    return $this;
   }
 
   public function questionsRequiredToPass() {

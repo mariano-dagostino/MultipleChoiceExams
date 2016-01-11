@@ -2,6 +2,8 @@
 
 namespace mdagostino\MultipleChoiceExams;
 
+use mdagostino\MultipleChoiceExams\ApprovalCriteria\PositiveApprovalCriteria;
+
 class PositiveApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
 
   public function tearDown() {
@@ -20,7 +22,7 @@ class PositiveApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
     // Create 50 random questions
     $questions  = array();
     for ($i=0; $i < 50; $i++) {
-      $questions[] = \Mockery::mock('Question');
+      $questions[] = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
     }
     $criteria->setQuestions($questions);
 
@@ -40,16 +42,15 @@ class PositiveApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
     // Create 50 random questions
     $questions  = array();
     for ($i=0; $i < 50; $i++) {
-      $question = \Mockery::mock('Question');
+      $question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
       // Answer correctly only 29 questions. 30 questions are required to pass
       $question->shouldReceive('wasAnswered')->andReturn(TRUE);
-      $question->shouldReceive('correctPercent')->andReturn($i < 28 ? 100 : 0 );
+      $question->shouldReceive('isCorrect')->andReturn($i < 28);
       $questions[] = $question;
     }
-    $criteria->setQuestions($questions);
 
     // Exam not approved.
-    $this->assertFalse($criteria->pass());
+    $this->assertFalse($criteria->pass($questions));
   }
 
   public function testExamApproved() {
@@ -58,16 +59,15 @@ class PositiveApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
     // Create 50 random questions
     $questions  = array();
     for ($i=0; $i < 50; $i++) {
-      $question = \Mockery::mock('Question');
+      $question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
       // Answer correcty the last 40 questions
       $question->shouldReceive('wasAnswered')->andReturn(TRUE);
-      $question->shouldReceive('correctPercent')->andReturn($i > 9 ? 100 : 0);
+      $question->shouldReceive('isCorrect')->andReturn($i > 9);
       $questions[] = $question;
     }
-    $criteria->setQuestions($questions);
 
     // Exam approved.
-    $this->assertTrue($criteria->pass());
+    $this->assertTrue($criteria->pass($questions));
   }
 
   public function testExamApprovedWithMinimunMark() {
@@ -76,16 +76,15 @@ class PositiveApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
     // Create 50 random questions
     $questions  = array();
     for ($i=0; $i < 50; $i++) {
-      $question = \Mockery::mock('Question');
+      $question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
       // Answer correcty the last 30 questions
       $question->shouldReceive('wasAnswered')->andReturn(TRUE);
-      $question->shouldReceive('correctPercent')->andReturn($i < 20 ? 0 : 100);
+      $question->shouldReceive('isCorrect')->andReturn($i >= 20);
       $questions[] = $question;
     }
-    $criteria->setQuestions($questions);
 
     // Exam approved.
-    $this->assertTrue($criteria->pass());
+    $this->assertTrue($criteria->pass($questions));
   }
 
   public function testExamApprovedUnAnsweredQuestions() {
@@ -94,17 +93,16 @@ class PositiveApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
     // Create 50 random questions
     $questions  = array();
     for ($i=0; $i < 50; $i++) {
-      $question = \Mockery::mock('Question');
+      $question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
       // Do not answer the first 20 answers
       $question->shouldReceive('wasAnswered')->andReturn($i >= 20);
       // Answer correcty the last 30 questions
-      $question->shouldReceive('correctPercent')->andReturn($i < 20 ? 0 : 100);
+      $question->shouldReceive('isCorrect')->andReturn($i >= 20);
       $questions[] = $question;
     }
-    $criteria->setQuestions($questions);
 
     // Exam approved.
-    $this->assertTrue($criteria->pass());
+    $this->assertTrue($criteria->pass($questions));
   }
 
 }
