@@ -8,13 +8,19 @@ use mdagostino\MultipleChoiceExams\Question\Question;
 use mdagostino\MultipleChoiceExams\Timer\ExamTimer;
 use mdagostino\MultipleChoiceExams\Question\QuestionInfo;
 use mdagostino\MultipleChoiceExams\Question\QuestionEvaluatorSimple;
-use mdagostino\MultipleChoiceExams\ApprovalCriteria\PositiveApprovalCriteria;
+use mdagostino\MultipleChoiceExams\ApprovalCriteria\BasicApprovalCriteria;
 
 class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
 
   public function testExamBasicWorkflow() {
 
-    $approval_criteria = new PositiveApprovalCriteria();
+    $approval_criteria = new BasicApprovalCriteria();
+    $approval_criteria->setSettings(array(
+      'percent_to_approve_exam' => 60,
+      'right_questions_sum' => 1.0,
+      'unanswered_questions_sum' => 0,
+      'wrong_questions_sum' => 0,
+    ));
     $exam = new Exam($approval_criteria);
 
     $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
@@ -65,7 +71,13 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testExamApproved() {
-    $approval_criteria = new PositiveApprovalCriteria();
+    $approval_criteria = new BasicApprovalCriteria();
+    $approval_criteria->setSettings(array(
+      'percent_to_approve_exam' => 60,
+      'right_questions_sum' => 1.0,
+      'unanswered_questions_sum' => 0,
+      'wrong_questions_sum' => 0,
+    ));
     $exam = new Exam($approval_criteria);
 
     $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
@@ -120,7 +132,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
    * @expectedExceptionMessage There is no left time to complete the exam.
    */
   public function testNoMoreTime() {
-    $approval_criteria = new PositiveApprovalCriteria();
+    $approval_criteria = new BasicApprovalCriteria();
     $exam = new Exam($approval_criteria);
 
     $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
