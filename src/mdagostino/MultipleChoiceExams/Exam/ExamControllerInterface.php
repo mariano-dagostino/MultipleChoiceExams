@@ -24,6 +24,8 @@ interface ExamControllerInterface {
 
   public function hasQuestionsToReview();
 
+  public function questionsToReview();
+
   public function getExam();
 
   public function getCurrentQuestion();

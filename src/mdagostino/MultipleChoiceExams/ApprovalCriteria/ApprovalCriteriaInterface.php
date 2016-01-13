@@ -8,8 +8,8 @@ interface ApprovalCriteriaInterface {
 
   public function pass(array $questions);
 
-  public function getSettings();
+  public function getSettings($key = NULL);
 
-  public function setSettings($settings);
+  public function setSettings(array $settings);
 
 }

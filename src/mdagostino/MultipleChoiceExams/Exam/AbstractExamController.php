@@ -84,6 +84,14 @@ abstract class AbstractExamController implements ExamControllerInterface {
     return count(array_filter($this->review_later)) > 0;
   }
 
+  public function questionsToReview() {
+    $questions_to_review = array();
+    foreach (array_keys(array_filter($this->review_later)) as $id) {
+      $questions_to_review[] = $this->getExam()->getQuestion($id);
+    }
+    return $questions_to_review;
+  }
+
   public function getExam() {
     return $this->exam;
   }

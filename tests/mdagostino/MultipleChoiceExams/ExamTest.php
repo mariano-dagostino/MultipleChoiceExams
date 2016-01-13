@@ -31,7 +31,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
     // Add ten questions to this exam
     $questions = array();
     for ($i=0; $i < 10; $i++) {
-      $question = \Mockery::mock('Question');
+      $question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
 
       // Answer only the even questions.
       $question->shouldReceive('wasAnswered')->once()->andReturn($i % 2 == 0);
@@ -50,7 +50,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
     // Add ten questions to this exam
     $questions = array();
     for ($i = 1; $i <= 10; $i++) {
-      $question = \Mockery::mock('Question');
+      $question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
 
       // Expect question number 2 to be answered later.
       if ($i == 2) {
@@ -80,7 +80,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
     // Add ten questions to this exam
     $questions = array();
     for ($i = 1; $i <= 10; $i++) {
-      $question = \Mockery::mock('Question');
+      $question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
       $questions[] = $question;
     }
     $exam->setQuestions($questions);

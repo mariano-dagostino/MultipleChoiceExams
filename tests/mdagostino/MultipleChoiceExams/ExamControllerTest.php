@@ -17,8 +17,7 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
   public function setUp() {
     $this->questions = array();
     for ($i = 0; $i < 10; $i++) {
-      $question = \Mockery::mock('Question');
-      $question->shouldReceive('reviewLater');
+      $question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
       $this->questions[] = $question;
     }
 
@@ -35,7 +34,7 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
         return $this->questions[$argument];
     })
     ->shouldReceive('isApproved')->andReturn(TRUE)
-    ->shouldReceive('getCurrentQuestion')->andReturn(\Mockery::mock('Question'))
+    ->shouldReceive('getCurrentQuestion')->andReturn(\Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface'))
     ->shouldReceive('totalQuestions')->andReturn(count($this->questions));
   }
 
@@ -95,10 +94,16 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
     $controller = new ExamWithTimeController($this->exam);
     $controller->setTimer($this->examTimer);
 
-    $first_question = \Mockery::mock('Question');
+    $questions = array();
+    for ($i = 1; $i <= 5 ; $i++) {
+      $question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
+      $questions[$i] = $question;
+    }
+
+    $first_question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
     $first_question->shouldReceive('reviewLater')->with(TRUE);
 
-    $second_question = \Mockery::mock('Question');
+    $second_question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
     $second_question->shouldReceive('reviewLater')->with(FALSE);
     $this->questions = array($first_question, $second_question);
 
