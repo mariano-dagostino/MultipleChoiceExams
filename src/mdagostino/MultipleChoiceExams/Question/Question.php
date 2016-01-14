@@ -71,11 +71,12 @@ class Question implements QuestionInterface {
    * @param  array $keys
    *   An array of ids that represent the options chossed by the user
    */
-  public function answer($keys) {
+  public function answer(array $keys) {
     $valid_keys = $this->validKeys();
     foreach ($keys as $key) {
       if (!in_array($key, $valid_keys)) {
-        throw new InvalidAnswerException("The key $key is not a valid answer for the question.");
+        $title =  $this->getInfo()->getTitle();
+        throw new InvalidAnswerException("The key '$key' is not a valid answer for the question '$title'");
       }
     }
 
@@ -106,7 +107,8 @@ class Question implements QuestionInterface {
   public function setAnswers(array $answers, array $right_answers) {
     foreach ($right_answers as $key) {
       if (!isset($answers[$key])) {
-        throw new InvalidAnswerException("The key $key is not a valid answer for the question.");
+        $title =  $this->getInfo()->getTitle();
+        throw new InvalidAnswerException("The key '$key' is not a valid answer for the question '$title'");
       }
     }
 

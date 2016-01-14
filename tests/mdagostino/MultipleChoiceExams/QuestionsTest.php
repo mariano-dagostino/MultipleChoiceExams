@@ -14,6 +14,10 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
   protected $multiple_choice_question_answers;
 
 
+  public function tearDown() {
+    \Mockery::close();
+  }
+
   public function setUp() {
     $this->single_evaluator = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionEvaluatorInterface');
     $this->single_evaluator
@@ -149,11 +153,20 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @expectedException mdagostino\MultipleChoiceExams\Exception\InvalidAnswerException
-   * @expectedExceptionMessage The key moon is not a valid answer for the question
+   * @expectedExceptionMessage The key 'moon' is not a valid answer for the question 'Planets'
    */
   public function testInvalidAnswer() {
     $planet_question = $this->multiple_choice_question;
     $planet_question->answer(array('moon'));
+  }
+
+  /**
+   * @expectedException mdagostino\MultipleChoiceExams\Exception\InvalidAnswerException
+   * @expectedExceptionMessage The key 'invalid key' is not a valid answer for the question 'Planets'
+   */
+  public function testInvalidAnswerKey() {
+    $this->multiple_choice_question
+      ->setAnswers($this->multiple_choice_question_answers, array('invalid key'));
   }
 
   public function testCorrectCount() {

@@ -12,11 +12,7 @@ interface QuestionInterface {
 
 	public function missCount();
 
-	public function rightChoicesCount();
-
-	public function totalChoicesCount();
-
-	public function answer($keys);
+	public function answer(array $keys);
 
 	public function resetAnswer();
 
