@@ -19,7 +19,7 @@ abstract class AbstractExamController implements ExamControllerInterface {
 
   public function startExam() {
     $this->counter = 1;
-    $this->total_questions = $this->getExam()->totalQuestions();
+    $this->total_questions = $this->getExam()->getQuestionCount();
   }
 
   /**
@@ -88,14 +88,14 @@ abstract class AbstractExamController implements ExamControllerInterface {
   abstract public function answerCurrentQuestion(array $answer);
 
   public function getCurrentQuestion() {
-    return $this->getExam()->getQuestion($this->getCurrentQuestionCount() - 1);
+    return $this->getExam()->getQuestion($this->getCurrentQuestionIndex() - 1);
   }
 
   public function getQuestionCount() {
-    return $this->getExam()->totalQuestions();
+    return $this->getExam()->getQuestionCount();
   }
 
-  public function getCurrentQuestionCount() {
+  public function getCurrentQuestionIndex() {
     return $this->counter;
   }
 

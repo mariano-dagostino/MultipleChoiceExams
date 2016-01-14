@@ -37,14 +37,14 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
     })
     ->shouldReceive('isApproved')->andReturn(TRUE)
     ->shouldReceive('getCurrentQuestion')->andReturn(\Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface'))
-    ->shouldReceive('totalQuestions')->andReturn(count($this->questions));
+    ->shouldReceive('getQuestionCount')->andReturn(count($this->questions));
   }
 
   public function testExamControlerCreation() {
     $controller = new ExamWithTimeController($this->exam);
     $controller->setTimer($this->examTimer);
     $controller->startExam();
-    $this->assertEquals($controller->getCurrentQuestionCount(), 1, "The first question is numbered with 1");
+    $this->assertEquals($controller->getCurrentQuestionIndex(), 1, "The first question is numbered with 1");
     $this->assertEquals($controller->getQuestionCount(), 10, "The are 10 questions in the current exam");
     $this->assertEquals($controller->getExam(), $this->exam);
   }
@@ -54,29 +54,29 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
     $controller = new ExamWithTimeController($this->exam);
     $controller->setTimer($this->examTimer);
     $controller->startExam();
-    $this->assertEquals($controller->getCurrentQuestionCount(), 1, "The first question is numbered with 1");
+    $this->assertEquals($controller->getCurrentQuestionIndex(), 1, "The first question is numbered with 1");
 
     $controller->moveToNextQuestion();
-    $this->assertEquals($controller->getCurrentQuestionCount(), 2, "The second question is numbered with 1");
+    $this->assertEquals($controller->getCurrentQuestionIndex(), 2, "The second question is numbered with 1");
 
     $controller->moveToPreviousQuestion();
-    $this->assertEquals($controller->getCurrentQuestionCount(), 1, "The first question is numbered with 1");
+    $this->assertEquals($controller->getCurrentQuestionIndex(), 1, "The first question is numbered with 1");
 
     $controller->moveToLastQuestion();
-    $this->assertEquals($controller->getCurrentQuestionCount(), 10, "The last question is numbered with 10");
+    $this->assertEquals($controller->getCurrentQuestionIndex(), 10, "The last question is numbered with 10");
 
     $controller->moveToFirstQuestion();
-    $this->assertEquals($controller->getCurrentQuestionCount(), 1, "The first question is numbered with 1");
+    $this->assertEquals($controller->getCurrentQuestionIndex(), 1, "The first question is numbered with 1");
 
     // Try out of range movements
     $controller->moveToLastQuestion();
     $controller->moveToNextQuestion();
-    $this->assertEquals($controller->getCurrentQuestionCount(), 10, "The last question is numbered with 10");
+    $this->assertEquals($controller->getCurrentQuestionIndex(), 10, "The last question is numbered with 10");
 
     // Try negative movement
     $controller->moveToFirstQuestion();
     $controller->moveToPreviousQuestion();
-    $this->assertEquals($controller->getCurrentQuestionCount(), 1, "The first question is numbered with 1");
+    $this->assertEquals($controller->getCurrentQuestionIndex(), 1, "The first question is numbered with 1");
   }
 
   public function testGetCurrentQuestion() {
@@ -129,9 +129,9 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
     })
     ->shouldReceive('getQuestions')->andReturn($this->questions)
     ->shouldReceive('getCurrentQuestion')->andReturnUsing(function($argument) {
-      $this->questions[$this->controller->getCurrentQuestionCount()];
+      $this->questions[$this->controller->getCurrentQuestionIndex()];
     })
-    ->shouldReceive('totalQuestions')->andReturn(3);
+    ->shouldReceive('getQuestionCount')->andReturn(3);
 
     $this->controller = new ExamWithTimeController($this->exam);
     $this->controller->setTimer($this->examTimer);

@@ -122,7 +122,7 @@ class Exam implements ExamInterface {
    *
    * @return int
    */
-  public function totalQuestions() {
+  public function getQuestionCount() {
     return count($this->questions);
   }
 }

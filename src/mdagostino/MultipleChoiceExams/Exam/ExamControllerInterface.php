@@ -30,6 +30,6 @@ interface ExamControllerInterface {
 
   public function getQuestionCount();
 
-  public function getCurrentQuestionCount();
+  public function getCurrentQuestionIndex();
 
 }

@@ -27,7 +27,7 @@ class ExamWithTimeController extends AbstractExamController implements ExamContr
       throw new ExpiredTimeException("There is no left time to complete the exam.");
     }
 
-    $this->getExam()->answerQuestion($this->getCurrentQuestionCount() - 1, $answer);
+    $this->getExam()->answerQuestion($this->getCurrentQuestionIndex() - 1, $answer);
   }
 
 }

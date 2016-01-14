@@ -26,7 +26,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
     $exam = new Exam($this->criteria);
 
     $this->assertEquals($exam->questionsAnswered(), 0);
-    $this->assertEquals($exam->totalQuestions(), 0);
+    $this->assertEquals($exam->getQuestionCount(), 0);
 
     // Add ten questions to this exam
     $questions = array();
@@ -39,7 +39,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
     }
 
     $exam->setQuestions($questions);
-    $this->assertEquals($exam->totalQuestions(), 10);
+    $this->assertEquals($exam->getQuestionCount(), 10);
     // Five questions should be answered
     $this->assertEquals($exam->questionsAnswered(), 5);
   }
