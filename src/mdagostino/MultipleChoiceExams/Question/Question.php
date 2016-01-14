@@ -64,7 +64,7 @@ class Question implements QuestionInterface {
   }
 
   public function isCorrect() {
-    return $this->question_evaluator->isCorrect($this);
+    return $this->getQuestionEvaluator()->isCorrect($this);
   }
 
   /**
