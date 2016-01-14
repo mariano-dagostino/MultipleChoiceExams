@@ -65,13 +65,19 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
     $controller->answerCurrentQuestion(array('one'));
     $controller->moveToNextQuestion();
     $controller->answerCurrentQuestion(array('one', 'two'));
+    $controller->tagCurrentQuestion('review_later');
     $controller->moveToNextQuestion();
     $controller->answerCurrentQuestion(array('one', 'three'));
+    $controller->tagCurrentQuestion('review_later');
+    $controller->tagCurrentQuestion('hard_question');
     $controller->moveToNextQuestion();
 
     $controller->finalizeExam();
 
     $this->assertFalse($controller->getExam()->isApproved());
+    $this->assertEquals($controller->getQuestionsTagged('review_later'), array($questions[1], $questions[2]));
+    $this->assertEquals($controller->getQuestionsTagged('hard_question'), array($questions[2]));
+    $this->assertEmpty($controller->getQuestionsTagged('not used'));
   }
 
   public function testExamApproved() {
