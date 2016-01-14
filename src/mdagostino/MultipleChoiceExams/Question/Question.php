@@ -73,7 +73,7 @@ class Question implements QuestionInterface {
    * @return array
    */
   protected function validKeys() {
-    return array_keys($this->available_answers);
+    return array_keys($this->getAvailableAnswers());
   }
 
   public function setAnswers(array $answers, array $right_answers) {

@@ -126,20 +126,17 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
     $controller->finalizeExam();
 
     $this->assertTrue($controller->getExam()->isApproved());
+    $this->assertEquals($controller->getExam()->getApprovalCriteria()->getScore(), 70);
   }
 
-  /**
-   * @expectedException mdagostino\MultipleChoiceExams\Exception\ExpiredTimeException
-   * @expectedExceptionMessage There is no left time to complete the exam.
-   */
-  public function testNoMoreTime() {
+  public function testFailedNoMoreTime() {
     $exam = new Exam($this->approval_criteria);
 
     $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
 
     $examTimer
     ->shouldReceive('start')->once()
-    ->shouldReceive('stillHasTime')->andReturn(TRUE, TRUE, TRUE, FALSE);
+    ->shouldReceive('stillHasTime')->times(4)->andReturn(TRUE, TRUE, TRUE, FALSE);
 
     $question_evaluator = new QuestionEvaluatorSimple();
     for ($i=0; $i < 100; $i++) {
@@ -167,16 +164,82 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
     $controller->setTimer($examTimer);
     $controller->startExam();
 
+    try {
+      // Answer correctly 70% of the answers
+      for ($i=0; $i < 70; $i++) {
+        $controller->answerCurrentQuestion(array('one', 'three'));
+        $controller->moveToNextQuestion();
+      }
 
-    // Answer correctly 70% of the answers
-    for ($i=0; $i < 70; $i++) {
-      $controller->answerCurrentQuestion(array('one', 'three'));
-      $controller->moveToNextQuestion();
+    }
+    catch (\Exception $e) {
+      $this->assertContains('There is no left time to complete the exam.', $e->getMessage());
+      $this->assertInstanceOf('mdagostino\MultipleChoiceExams\Exception\ExpiredTimeException', $e);
     }
 
     $controller->finalizeExam();
 
-    $this->assertTrue($controller->getExam()->isApproved());
+    $this->assertFalse($controller->getExam()->isApproved());
+    $this->assertEquals($controller->getExam()->getApprovalCriteria()->getScore(), 3);
   }
+
+
+  public function testNoMoreTimeButApproved() {
+    $exam = new Exam($this->approval_criteria);
+
+    $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
+
+    $examTimer
+    ->shouldReceive('start')->once()
+    ->shouldReceive('stillHasTime')->times(5)->andReturn(TRUE, TRUE, TRUE, TRUE, FALSE);
+
+    $question_evaluator = new QuestionEvaluatorSimple();
+    for ($i=0; $i < 5; $i++) {
+
+      $available_answers = array(
+       'one' => 'One',
+       'two' => 'Two',
+       'three' => 'Three'
+      );
+      $right_answers = array('one', 'three');
+
+      $question_info = new QuestionInfo();
+      $question = new Question($question_evaluator, $question_info);
+      $question
+        ->setAnswers($available_answers, $right_answers)
+        ->getInfo()
+          ->setTitle('Question ' . $i)
+          ->setDescription('Description for question ' . $i);
+
+      $questions[] = $question;
+    }
+    $exam->setQuestions($questions);
+
+    $controller = new ExamWithTimeController($exam);
+    $controller->setTimer($examTimer);
+    $controller->startExam();
+
+    try {
+      // Answer correctly 80% of the answers, the last question cannot be
+      // answered because time expired.
+      for ($i=0; $i < 5; $i++) {
+        $controller->answerCurrentQuestion(array('one', 'three'));
+        $controller->moveToNextQuestion();
+      }
+    }
+    catch (\Exception $e) {
+      $this->assertContains('There is no left time to complete the exam.', $e->getMessage());
+      $this->assertInstanceOf('mdagostino\MultipleChoiceExams\Exception\ExpiredTimeException', $e);
+    }
+
+    $this->assertFalse($controller->moveToLastQuestion()->getCurrentQuestion()->wasAnswered());
+
+    $controller->finalizeExam();
+
+    $this->assertTrue($controller->getExam()->isApproved());
+    $this->assertEquals($controller->getExam()->getApprovalCriteria()->getScore(), 80);
+  }
+
+
 
 }

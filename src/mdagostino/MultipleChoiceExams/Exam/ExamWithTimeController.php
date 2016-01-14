@@ -24,6 +24,7 @@ class ExamWithTimeController extends AbstractExamController implements ExamContr
 
   public function answerCurrentQuestion(array $answer) {
     if ($this->timer->stillHasTime() == FALSE) {
+      $this->finalizeExam();
       throw new ExpiredTimeException("There is no left time to complete the exam.");
     }
 
