@@ -12,6 +12,10 @@ use mdagostino\MultipleChoiceExams\ApprovalCriteria\BasicApprovalCriteria;
 
 class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
 
+  public function tearDown() {
+    \Mockery::close();
+  }
+
   public function setUp() {
 
     $this->approval_criteria = new BasicApprovalCriteria();
@@ -24,15 +28,6 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
 
   public function testExamBasicWorkflow() {
     $exam = new Exam($this->approval_criteria);
-
-    $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
-
-    // The time is in seconds, 30 minutes are 1800 seconds.
-    $examTimer
-    ->shouldReceive('start')->once()
-    ->shouldReceive('stillHasTime')->andReturn(TRUE)
-    ->shouldReceive('getTime')->andReturn(1);
-
 
     $question_evaluator = new QuestionEvaluatorSimple();
     for ($i=0; $i < 100; $i++) {
@@ -57,6 +52,13 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
     $exam->setQuestions($questions);
 
     $controller = new ExamWithTimeController($exam);
+
+    $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
+
+    $examTimer
+    ->shouldReceive('start')->once()
+    ->shouldReceive('stillHasTime')->times(3)->andReturn(TRUE);
+
     $controller->setTimer($examTimer);
     $controller->startExam();
 
@@ -75,13 +77,6 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
   public function testExamApproved() {
     $exam = new Exam($this->approval_criteria);
 
-    $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
-
-    $examTimer
-    ->shouldReceive('start')->once()
-    ->shouldReceive('stillHasTime')->andReturn(TRUE)
-    ->shouldReceive('getTime')->andReturn(1);
-
     $question_evaluator = new QuestionEvaluatorSimple();
     for ($i=0; $i < 100; $i++) {
 
@@ -104,13 +99,18 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
     }
     $exam->setQuestions($questions);
 
+    $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
+
+    $examTimer
+    ->shouldReceive('start')->once()
+    ->shouldReceive('stillHasTime')->times(70)->andReturn(TRUE);
+
     $controller = new ExamWithTimeController($exam);
     $controller->setTimer($examTimer);
     $controller->startExam();
 
-
     // Answer correctly 70% of the answers
-    for ($i = 0; $i < 70; $i++) {
+    for ($i = 1; $i <= 70; $i++) {
       $this->assertFalse($controller->getCurrentQuestion()->wasAnswered());
       $controller->answerCurrentQuestion(array('one', 'three'));
       $this->assertTrue($controller->getCurrentQuestion()->wasAnswered());
