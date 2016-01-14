@@ -8,7 +8,9 @@ interface QuestionInterface {
 
 	public function wasAnswered();
 
-	public function correctlyChossenCount();
+	public function hitCount();
+
+	public function missCount();
 
 	public function rightChoicesCount();
 
@@ -20,7 +22,7 @@ interface QuestionInterface {
 
 	public function isCorrect();
 
-	public function setAnswers($answers, $right_answers);
+	public function setAnswers(array $answers, array $right_answers);
 
 	public function getAvailableAnswers();
 

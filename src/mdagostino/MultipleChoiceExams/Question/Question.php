@@ -37,7 +37,7 @@ class Question implements QuestionInterface {
     return !empty($this->chossen_answers);
   }
 
-  public function correctlyChossenCount() {
+  public function hitCount() {
     $correct_choices = 0;
     foreach ($this->chossen_answers as $key) {
       if (in_array($key, $this->right_answers)) {
@@ -47,7 +47,7 @@ class Question implements QuestionInterface {
     return $correct_choices;
   }
 
-  public function incorrectlyChossenCount() {
+  public function missCount() {
     $incorrect_choices = 0;
     foreach ($this->chossen_answers as $key) {
       if (!in_array($key, $this->right_answers)) {
@@ -103,7 +103,7 @@ class Question implements QuestionInterface {
     return array_keys($this->available_answers);
   }
 
-  public function setAnswers($answers, $right_answers) {
+  public function setAnswers(array $answers, array $right_answers) {
     foreach ($right_answers as $key) {
       if (!isset($answers[$key])) {
         throw new InvalidAnswerException("The key $key is not a valid answer for the question.");

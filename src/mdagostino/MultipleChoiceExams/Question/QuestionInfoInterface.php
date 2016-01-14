@@ -11,4 +11,10 @@ interface QuestionInfoInterface {
   public function setDescription($description);
 
   public function getDescription();
+
+  public function hasTag($tag);
+
+  public function tag($tag);
+
+  public function untag($tag);
 }
