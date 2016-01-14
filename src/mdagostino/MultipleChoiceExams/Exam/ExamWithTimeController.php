@@ -7,11 +7,16 @@ use mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface;
 
 class ExamWithTimeController extends AbstractExamController implements ExamControllerInterface {
 
-  protected $timer;
+  protected $timer = NULL;
 
-  /**
-   * Defines a period of time between the .
-  */
+  public function getTimer() {
+    if (!isset($this->timer)) {
+      throw new Exception("You must define a timer for ExamWithTimeController controllers");
+    }
+
+    return $this->timer;
+  }
+
   public function setTimer(ExamTimerInterface $timer) {
     $this->timer = $timer;
     return $this;
@@ -19,11 +24,11 @@ class ExamWithTimeController extends AbstractExamController implements ExamContr
 
   public function startExam() {
     parent::startExam();
-    $this->timer->start();
+    $this->getTimer()->start();
   }
 
   public function answerCurrentQuestion(array $answer) {
-    if ($this->timer->stillHasTime() == FALSE) {
+    if ($this->getTimer()->stillHasTime() == FALSE) {
       $this->finalizeExam();
       throw new ExpiredTimeException("There is no left time to complete the exam.");
     }

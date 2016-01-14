@@ -12,7 +12,7 @@ interface ExamInterface {
 
   public function getApprovalCriteria();
 
-  public function answerQuestion($question_id, $answer);
+  public function answerQuestion($question_id, array $answer);
 
   public function isApproved();
 

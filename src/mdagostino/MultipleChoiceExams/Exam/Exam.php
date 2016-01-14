@@ -7,7 +7,7 @@ use mdagostino\MultipleChoiceExams\Exception\InvalidQuestionException;
 
 class Exam implements ExamInterface {
 
-  // The questions of the exam. An array of MultipleChoiceExams\QuestionInterface.
+  // The questions of the exam. An array of QuestionInterface.
   protected $questions = array();
 
   // A Boolean value that indicates if the user passed the exam after finish it.
@@ -43,16 +43,8 @@ class Exam implements ExamInterface {
    * @param  array $answer
    *   An array of question options keys that represent the answer of the user.
    */
-  public function answerQuestion($question_id, $answer) {
-    if (!isset($this->questions[$question_id])) {
-      throw new InvalidQuestionException("There is no questions with the id $question_id");
-    }
-
-    if (!is_array($answer)) {
-      $answer = array($answer);
-    }
-
-    $this->questions[$question_id]->answer($answer);
+  public function answerQuestion($question_id, array $answer) {
+    $this->getQuestion($question_id)->answer($answer);
     return $this;
   }
 
@@ -64,7 +56,7 @@ class Exam implements ExamInterface {
   public function isApproved() {
 
     if (!isset($this->pass)) {
-      $this->pass = $this->approval_criteria->pass($this->getQuestions());
+      $this->pass = $this->getApprovalCriteria()->pass($this->getQuestions());
     }
 
     return $this->pass;
@@ -77,7 +69,7 @@ class Exam implements ExamInterface {
    */
   public function questionsAnswered() {
     $count = 0;
-    foreach ($this->questions as $question) {
+    foreach ($this->getQuestions() as $question) {
       if ($question->wasAnswered()) {
         $count++;
       }
@@ -110,7 +102,7 @@ class Exam implements ExamInterface {
 
   /**
    * Defines the questions of this exam.
-   * @param  $questions an array of MultipleChoiceExams\Question
+   * @param  $questions an array of QuestionInterface
    */
   public function setQuestions($questions) {
     $this->questions = $questions;
@@ -123,6 +115,6 @@ class Exam implements ExamInterface {
    * @return int
    */
   public function getQuestionCount() {
-    return count($this->questions);
+    return count($this->getQuestions());
   }
 }
