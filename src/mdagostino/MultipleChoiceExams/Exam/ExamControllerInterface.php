@@ -18,13 +18,11 @@ interface ExamControllerInterface {
 
   public function moveToLastQuestion();
 
-  public function markCurrentQuestionForLaterReview();
+  public function tagCurrentQuestion($tag);
 
-  public function unmarkCurrentQuestionForLaterReview();
+  public function untagCurrentQuestion($tag);
 
-  public function hasQuestionsToReview();
-
-  public function questionsToReview();
+  public function getQuestionsTagged($tag);
 
   public function getExam();
 

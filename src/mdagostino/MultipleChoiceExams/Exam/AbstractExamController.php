@@ -12,9 +12,6 @@ abstract class AbstractExamController implements ExamControllerInterface {
 
   protected $finalized = FALSE;
 
-  protected $review_later = array();
-
-
   public function __construct(ExamInterface $exam) {
     $this->exam = $exam;
     return $this;
@@ -66,30 +63,22 @@ abstract class AbstractExamController implements ExamControllerInterface {
     return $this;
   }
 
-  public function markCurrentQuestionForLaterReview() {
-    $this->review_later[$this->getCurrentQuestionCount()] = TRUE;
+  public function tagCurrentQuestion($tag) {
+    $this->getCurrentQuestion()->getInfo()->tag($tag);
   }
 
-  public function unmarkCurrentQuestionForLaterReview() {
-    $this->review_later[$this->getCurrentQuestionCount()] = FALSE;
+  public function untagCurrentQuestion($tag) {
+    $this->getCurrentQuestion()->getInfo()->untag($tag);
   }
 
-  /**
-   * Returns TRUE if at least one of the questions of this exam was marked to be
-   * reviewed later.
-   *
-   * @return boolean
-   */
-  public function hasQuestionsToReview() {
-    return count(array_filter($this->review_later)) > 0;
-  }
-
-  public function questionsToReview() {
-    $questions_to_review = array();
-    foreach (array_keys(array_filter($this->review_later)) as $id) {
-      $questions_to_review[] = $this->getExam()->getQuestion($id);
+  public function getQuestionsTagged($tag) {
+    $questions_tagged = array();
+    foreach ($this->getExam()->getQuestions() as $question) {
+      if ($question->getInfo()->hasTag($tag)) {
+        $questions_tagged[] = $question;
+      }
     }
-    return $questions_to_review;
+    return $questions_tagged;
   }
 
   public function getExam() {

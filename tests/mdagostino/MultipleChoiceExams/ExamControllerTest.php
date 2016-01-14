@@ -10,6 +10,8 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
 
   protected $questions = array();
 
+  protected $controller;
+
   public function tearDown() {
     \Mockery::close();
   }
@@ -91,30 +93,70 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testReviewQuestionsLater() {
-    $controller = new ExamWithTimeController($this->exam);
-    $controller->setTimer($this->examTimer);
-
-    $questions = array();
-    for ($i = 1; $i <= 5 ; $i++) {
-      $question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
-      $questions[$i] = $question;
-    }
+    $tag = 'review_later';
 
     $first_question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
-    $first_question->shouldReceive('reviewLater')->with(TRUE);
+    $first_question_info = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInfoInterface');
+    $first_question_info->shouldReceive('tag')->once()->with($tag);
+    $first_question_info->shouldReceive('hasTag')->twice()->andReturn(TRUE, FALSE);
+    $first_question_info->shouldReceive('untag')->once()->with($tag);
+    $first_question->shouldReceive('getInfo')->andReturn($first_question_info);
 
     $second_question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
-    $second_question->shouldReceive('reviewLater')->with(FALSE);
-    $this->questions = array($first_question, $second_question);
+    $second_question_info = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInfoInterface');
+    $second_question_info->shouldReceive('tag')->never();
+    $second_question_info->shouldReceive('hasTag')->twice()->andReturn(FALSE, FALSE);
+    $second_question->shouldReceive('getInfo')->andReturn($second_question_info);
 
-    $controller->startExam();
+    $third_question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
+    $third_question_info = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInfoInterface');
+    $third_question_info->shouldReceive('tag')->once()->with($tag);
+    $third_question_info->shouldReceive('untag')->never()->with($tag);
+    $third_question_info->shouldReceive('hasTag')->twice()->andReturn(TRUE, TRUE);
+    $third_question->shouldReceive('getInfo')->andReturn($third_question_info);
+
+    $this->questions = array(
+      $first_question,
+      $second_question,
+      $third_question,
+    );
+
+    $this->exam = \Mockery::mock('mdagostino\MultipleChoiceExams\Exam\ExamInterface');
+    $this->exam
+    ->shouldReceive('getQuestion')
+    ->andReturnUsing(function($argument) {
+        return $this->questions[$argument];
+    })
+    ->shouldReceive('getQuestions')->andReturn($this->questions)
+    ->shouldReceive('getCurrentQuestion')->andReturnUsing(function($argument) {
+      $this->questions[$this->controller->getCurrentQuestionCount()];
+    })
+    ->shouldReceive('totalQuestions')->andReturn(3);
+
+    $this->controller = new ExamWithTimeController($this->exam);
+    $this->controller->setTimer($this->examTimer);
+
+    $this->controller->startExam();
 
     // Mark the first question to be reviewed later
-    $controller->markCurrentQuestionForLaterReview();
+    $this->controller->tagCurrentQuestion($tag);
+    $this->assertEquals($this->controller->getCurrentQuestion(), $first_question);
 
-    // Mark the second question to not be reviewd later
-    $controller->moveToNextQuestion();
-    $controller->unmarkCurrentQuestionForLaterReview();
+    $this->controller->moveToNextQuestion();
+    $this->assertEquals($this->controller->getCurrentQuestion(), $second_question);
+
+    // Mark the third question to not be reviewd later
+    $this->controller->moveToNextQuestion();
+    $this->assertEquals($this->controller->getCurrentQuestion(), $third_question);
+    $this->controller->tagCurrentQuestion($tag);
+
+    $this->assertEquals($this->controller->getQuestionsTagged($tag), array($first_question, $third_question));
+
+    $this->controller->moveToFirstQuestion();
+    $this->assertEquals($this->controller->getCurrentQuestion(), $first_question);
+    $this->controller->untagCurrentQuestion($tag);
+    $this->assertEquals($this->controller->getQuestionsTagged($tag), array($third_question));
+
   }
 
   public function testFinalizeExam() {
