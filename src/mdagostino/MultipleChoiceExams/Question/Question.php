@@ -34,35 +34,7 @@ class Question implements QuestionInterface {
    * @return boolean
    */
   public function wasAnswered() {
-    return !empty($this->chossen_answers);
-  }
-
-  public function hitCount() {
-    $correct_choices = 0;
-    foreach ($this->chossen_answers as $key) {
-      if (in_array($key, $this->right_answers)) {
-        $correct_choices++;
-      }
-    }
-    return $correct_choices;
-  }
-
-  public function missCount() {
-    $incorrect_choices = 0;
-    foreach ($this->chossen_answers as $key) {
-      if (!in_array($key, $this->right_answers)) {
-        $incorrect_choices++;
-      }
-    }
-    return $incorrect_choices;
-  }
-
-  public function rightChoicesCount() {
-    return count($this->right_answers);
-  }
-
-  public function totalChoicesCount() {
-    return count($this->available_answers);
+    return count($this->getChossenAnswers()) > 0;
   }
 
   /**
@@ -131,5 +103,9 @@ class Question implements QuestionInterface {
 
   public function getInfo() {
     return $this->info;
+  }
+
+  public function getQuestionEvaluator() {
+    return $this->question_evaluator;
   }
 }

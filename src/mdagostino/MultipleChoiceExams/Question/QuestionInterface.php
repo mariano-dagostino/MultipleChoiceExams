@@ -8,10 +8,6 @@ interface QuestionInterface {
 
 	public function wasAnswered();
 
-	public function hitCount();
-
-	public function missCount();
-
 	public function answer(array $keys);
 
 	public function resetAnswer();
@@ -26,7 +22,7 @@ interface QuestionInterface {
 
 	public function getChossenAnswers();
 
-
+	public function getQuestionEvaluator();
 }
 
 

@@ -23,7 +23,7 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     $this->single_evaluator
       ->shouldReceive('isCorrect')
       ->andReturnUsing(function($question) {
-        return $question->hitCount() == 1 && $question->missCount() == 0;
+        return $question->getChossenAnswers() == array(2);
       });
 
 
@@ -50,7 +50,8 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     $this->multiple_evaluator
       ->shouldReceive('isCorrect')
       ->andReturnUsing(function($question) {
-        return $question->hitCount() == 2 && $question->missCount() == 0;
+        return $question->getChossenAnswers() == array('mercury', 'venus') ||
+               $question->getChossenAnswers() == array('venus', 'mercury');
       });
 
     $this->multiple_choice_question_info = new QuestionInfo();
@@ -120,18 +121,12 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
 
     // Only one answer make the Question incorrect
     $planet_question->answer(array('mercury'));
-    $this->assertEquals($planet_question->hitCount(), 1);
-    $this->assertEquals($planet_question->missCount(), 0);
 
     $planet_question->answer(array('mercury', 'venus'));
-    $this->assertEquals($planet_question->hitCount(), 2);
-    $this->assertEquals($planet_question->missCount(), 0);
     $this->assertTrue($planet_question->isCorrect());
 
     // Try with different order
     $planet_question->answer(array('venus', 'mercury'));
-    $this->assertEquals($planet_question->hitCount(), 2);
-    $this->assertEquals($planet_question->missCount(), 0);
     $this->assertTrue($planet_question->isCorrect());
   }
 
@@ -173,21 +168,14 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     $planet_question = $this->multiple_choice_question;
 
     $planet_question->answer(array('mercury', 'venus'));
-    $this->assertEquals($planet_question->hitCount(), 2);
 
     $planet_question->answer(array('mercury'));
-    $this->assertEquals($planet_question->hitCount(), 1);
 
     $planet_question->answer(array('mercury', 'mars'));
-    $this->assertEquals($planet_question->hitCount(), 1);
-    $this->assertEquals($planet_question->missCount(), 1);
 
     $planet_question->answer(array('jupiter', 'mars', 'neptune'));
-    $this->assertEquals($planet_question->hitCount(), 0);
 
     $planet_question->answer(array('mercury', 'venus', 'jupiter', 'mars'));
-    $this->assertEquals($planet_question->hitCount(), 2);
-    $this->assertEquals($planet_question->missCount(), 2);
 
     $math_question = $this->single_choice_question;
 
