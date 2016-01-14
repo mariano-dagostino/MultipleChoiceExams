@@ -12,16 +12,18 @@ use mdagostino\MultipleChoiceExams\ApprovalCriteria\BasicApprovalCriteria;
 
 class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
 
-  public function testExamBasicWorkflow() {
+  public function setUp() {
 
-    $approval_criteria = new BasicApprovalCriteria();
-    $approval_criteria->setSettings(array(
-      'percent_to_approve_exam' => 60,
-      'right_questions_sum' => 1.0,
-      'unanswered_questions_sum' => 0,
-      'wrong_questions_sum' => 0,
-    ));
-    $exam = new Exam($approval_criteria);
+    $this->approval_criteria = new BasicApprovalCriteria();
+    $this->approval_criteria
+      ->setScoreToApprove(60)
+      ->setRightQuestionsSum(1)
+      ->setWrongQuestionsRest(0);
+
+  }
+
+  public function testExamBasicWorkflow() {
+    $exam = new Exam($this->approval_criteria);
 
     $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
 
@@ -71,14 +73,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testExamApproved() {
-    $approval_criteria = new BasicApprovalCriteria();
-    $approval_criteria->setSettings(array(
-      'percent_to_approve_exam' => 60,
-      'right_questions_sum' => 1.0,
-      'unanswered_questions_sum' => 0,
-      'wrong_questions_sum' => 0,
-    ));
-    $exam = new Exam($approval_criteria);
+    $exam = new Exam($this->approval_criteria);
 
     $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
 
@@ -132,8 +127,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
    * @expectedExceptionMessage There is no left time to complete the exam.
    */
   public function testNoMoreTime() {
-    $approval_criteria = new BasicApprovalCriteria();
-    $exam = new Exam($approval_criteria);
+    $exam = new Exam($this->approval_criteria);
 
     $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
 
@@ -180,4 +174,3 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
   }
 
 }
-

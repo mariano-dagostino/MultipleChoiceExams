@@ -4,31 +4,48 @@ namespace mdagostino\MultipleChoiceExams\ApprovalCriteria;
 
 class BasicApprovalCriteria extends AbstractApprovalCriteria implements ApprovalCriteriaInterface {
 
-  public function __construct() {
-    $this->settings = array(
-      'percent_to_approve_exam' => 60,
-      'right_questions_sum' => 1.0,
-      'unanswered_questions_sum' => 0,
-      'wrong_questions_sum' => -0.3,
-    );
+  protected $score_to_approve = 60;
+
+  protected $right_sum = 1;
+
+  protected $wrong_rest = 0.3;
+
+  protected $unanswered_rest = 0;
+
+  public function getScoreToApprove() {
+    return $this->score_to_approve;
   }
 
-  public function rulesDescription() {
-    $right_sum = $this->getSettings('right_questions_sum');
-    $not_answered_sum = $this->getSettings('unanswered_questions_sum');
-    $wrong_sum = $this->getSettings('wrong_questions_sum');
-    $percent = $this->getSettings('percent_to_approve_exam');
+  public function setScoreToApprove($value) {
+    $this->score_to_approve = $value;
+    return $this;
+  }
 
-    $rules = array();
-    $rules[] = "The exam is approved with $percent%";
+  public function getRightQuestionsSum() {
+    return $this->right_sum;
+  }
 
-    if ($not_answered_sum != 0 || $wrong_sum != 0) {
-      $rules[] = 'Correclty answered questions are considered ' . sprintf("%+.2f", $right_sum);
-      $rules[] = 'Wrong answered questions are considered ' . sprintf("%+.2f", $wrong_sum);
-      $rules[] = 'Unanswered questions are considered ' . sprintf("%+.2f", $not_answered_sum);
-    }
+  public function setRightQuestionsSum($value) {
+    $this->right_sum = $value;
+    return $this;
+  }
 
-    return $rules;
+  public function getWrongQuestionsRest() {
+    return $this->wrong_rest;
+  }
+
+  public function setWrongQuestionsRest($value) {
+    $this->wrong_rest = $value;
+    return $this;
+  }
+
+  public function getUnansweredQuestionsRest() {
+    return $this->unanswered_rest;
+  }
+
+  public function setUnansweredQuestionsRest($value) {
+    $this->unanswered_rest = $value;
+    return $this;
   }
 
   public function calculateScore(array $questions) {
@@ -42,17 +59,15 @@ class BasicApprovalCriteria extends AbstractApprovalCriteria implements Approval
     $question_count = count($questions);
     $not_answered = $question_count - ($correct + $incorrect);
 
-    $right_sum = $this->getSettings('right_questions_sum');
-    $not_answered_sum = $this->getSettings('unanswered_questions_sum');
-    $wrong_sum = $this->getSettings('wrong_questions_sum');
+    $percent = 0;
+    $percent += $this->getRightQuestionsSum() * $correct;
+    $percent -= $this->getWrongQuestionsRest() * $incorrect;
+    $percent -= $this->getUnansweredQuestionsRest() * $not_answered;
 
-    $percent = ($correct * $right_sum + $not_answered_sum * $not_answered + $incorrect * $wrong_sum) / $question_count;
-
-    return $percent * 100.0;
+    return $percent / $question_count * 100.0;
   }
 
   public function decideIfPass($score) {
-    $percent_to_approve = $this->getSettings('percent_to_approve_exam');
-    return $score >= $percent_to_approve;
+    return $score >= $this->getScoreToApprove();
   }
 }
