@@ -63,7 +63,7 @@ class Exam implements ExamInterface {
    */
   public function isApproved() {
 
-    if (empty($this->pass)) {
+    if (!isset($this->pass)) {
       $this->pass = $this->approval_criteria->pass($this->getQuestions());
     }
 
