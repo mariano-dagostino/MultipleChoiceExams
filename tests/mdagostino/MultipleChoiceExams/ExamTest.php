@@ -3,19 +3,9 @@
 namespace mdagostino\MultipleChoiceExams;
 
 use mdagostino\MultipleChoiceExams\Exam\Exam;
-use mdagostino\MultipleChoiceExams\ApprovalCriteria\ApprovalCriteriaInterface;
 use mdagostino\MultipleChoiceExams\Exception\InvalidQuestionException;
 
 class ExamsTest extends \PHPUnit_Framework_TestCase {
-
-  public function setUp() {
-    $this->criteria =  \Mockery::mock('mdagostino\MultipleChoiceExams\ApprovalCriteria\ApprovalCriteriaInterface');
-    $this->criteria
-      ->shouldReceive('rulesDescription')->andReturn('')
-      ->shouldReceive('pass')->andReturn(TRUE)
-      ->shouldReceive('getSettings')->andReturn(array())
-      ->shouldReceive('setSettings')->andReturn();
-  }
 
   public function tearDown() {
     \Mockery::close();
@@ -23,7 +13,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
 
   public function testExamCreation() {
 
-    $exam = new Exam($this->criteria);
+    $exam = new Exam();
 
     $this->assertEquals($exam->questionsAnswered(), 0);
     $this->assertEquals($exam->getQuestionCount(), 0);
@@ -45,7 +35,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testExamQuestionAnswering() {
-    $exam = new Exam($this->criteria);
+    $exam = new Exam();
 
     // Add ten questions to this exam
     $questions = array();
@@ -75,7 +65,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
 
 
   public function testGetSpecificQuestion() {
-    $exam = new Exam($this->criteria);
+    $exam = new Exam();
 
     // Add ten questions to this exam
     $questions = array();
@@ -93,7 +83,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
    * @expectedExceptionMessage There is no question with id 3
    */
   public function testGetInvalidQuestion() {
-    $exam = new Exam($this->criteria);
+    $exam = new Exam();
 
     $this->assertEquals($exam->getQuestion(3), $questions[3]);
   }

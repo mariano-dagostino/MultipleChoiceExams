@@ -2,7 +2,7 @@
 
 namespace mdagostino\MultipleChoiceExams;
 
-use mdagostino\MultipleChoiceExams\Exam\ExamWithTimeController;
+use mdagostino\MultipleChoiceExams\Controller\ExamWithTimeController;
 
 class ExamControllerTest extends \PHPUnit_Framework_TestCase {
 
@@ -12,20 +12,28 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
 
   protected $controller;
 
+  protected $approval_criteria = NULL;
+
+  protected $exam_timer = NULL;
+
   public function tearDown() {
     \Mockery::close();
   }
 
   public function setUp() {
+
+    $this->approval_criteria = \Mockery::mock('mdagostino\MultipleChoiceExams\ApprovalCriteria\ApprovalCriteriaInterface');
+    $this->approval_criteria->shouldReceive('isApproved');
+
     $this->questions = array();
     for ($i = 0; $i < 10; $i++) {
       $question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
       $this->questions[] = $question;
     }
 
-    $this->examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
+    $this->exam_timer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
 
-    $this->examTimer
+    $this->exam_timer
     ->shouldReceive('start')->once()
     ->shouldReceive('stillHasTime')->andReturn(TRUE);
 
@@ -35,14 +43,15 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
     ->andReturnUsing(function($argument) {
         return $this->questions[$argument];
     })
+    ->shouldReceive('getQuestions')->andReturn($this->questions)
     ->shouldReceive('isApproved')->andReturn(TRUE)
     ->shouldReceive('getCurrentQuestion')->andReturn(\Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface'))
     ->shouldReceive('getQuestionCount')->andReturn(count($this->questions));
   }
 
   public function testExamControlerCreation() {
-    $controller = new ExamWithTimeController($this->exam);
-    $controller->setTimer($this->examTimer);
+    $controller = new ExamWithTimeController($this->exam, $this->approval_criteria);
+    $controller->setTimer($this->exam_timer);
     $controller->startExam();
     $this->assertEquals($controller->getCurrentQuestionIndex(), 1, "The first question is numbered with 1");
     $this->assertEquals($controller->getQuestionCount(), 10, "The are 10 questions in the current exam");
@@ -51,8 +60,8 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
 
 
   public function testExamControllerQuestionNavigation() {
-    $controller = new ExamWithTimeController($this->exam);
-    $controller->setTimer($this->examTimer);
+    $controller = new ExamWithTimeController($this->exam, $this->approval_criteria);
+    $controller->setTimer($this->exam_timer);
     $controller->startExam();
     $this->assertEquals($controller->getCurrentQuestionIndex(), 1, "The first question is numbered with 1");
 
@@ -80,8 +89,8 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testGetCurrentQuestion() {
-    $controller = new ExamWithTimeController($this->exam);
-    $controller->setTimer($this->examTimer);
+    $controller = new ExamWithTimeController($this->exam, $this->approval_criteria);
+    $controller->setTimer($this->exam_timer);
     $controller->startExam();
     $this->assertEquals($controller->getCurrentQuestion(), $this->questions[0]);
 
@@ -133,8 +142,8 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
     })
     ->shouldReceive('getQuestionCount')->andReturn(3);
 
-    $this->controller = new ExamWithTimeController($this->exam);
-    $this->controller->setTimer($this->examTimer);
+    $this->controller = new ExamWithTimeController($this->exam, $this->approval_criteria);
+    $this->controller->setTimer($this->exam_timer);
 
     $this->controller->startExam();
 
@@ -160,11 +169,21 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testFinalizeExam() {
-    $controller = new ExamWithTimeController($this->exam);
-    $controller->setTimer($this->examTimer);
+    $controller = new ExamWithTimeController($this->exam, $this->approval_criteria);
+    $controller->setTimer($this->exam_timer);
 
     $controller->startExam();
     $controller->finalizeExam();
+  }
+
+
+  public function testGetters() {
+    $controller = new ExamWithTimeController($this->exam, $this->approval_criteria);
+    $controller->setTimer($this->exam_timer);
+    $controller->startExam();
+
+    $this->assertEquals($controller->getApprovalCriteria(), $this->approval_criteria);
+    $this->assertEquals($controller->getTimer(), $this->exam_timer);
   }
 
 

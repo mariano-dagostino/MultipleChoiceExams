@@ -8,11 +8,11 @@ This is how the code works:
 
 
 ```php
-
+<?php
 require 'vendor/autoload.php';
 
 use mdagostino\MultipleChoiceExams\Exam\Exam;
-use mdagostino\MultipleChoiceExams\Exam\ExamWithTimeController;
+use mdagostino\MultipleChoiceExams\Controller\ExamWithTimeController;
 use mdagostino\MultipleChoiceExams\Question\Question;
 use mdagostino\MultipleChoiceExams\Timer\ExamTimer;
 use mdagostino\MultipleChoiceExams\Question\QuestionInfo;
@@ -76,10 +76,10 @@ $approval_criteria
   ->setRightQuestionsSum(1)
   ->setWrongQuestionsRest(0.3);
 
-$exam = new Exam($approval_criteria);
+$exam = new Exam();
 $exam->setQuestions($questions);
 
-$controller = new ExamWithTimeController($exam);
+$controller = new ExamWithTimeController($exam, $approval_criteria);
 
 $exam_timer = new ExamTimer();
 $exam_timer->setDuration(60); // 60 minutes
@@ -98,8 +98,8 @@ $controller->moveToNextQuestion();
 
 $controller->finalizeExam();
 
-echo 'Exam: ' . ($controller->getExam()->isApproved() ? 'Approved' : ' Not Approved')  . PHP_EOL;
-echo 'Exam score: ' . sprintf('%.2f%%', $controller->getExam()->getApprovalCriteria()->getScore()) . PHP_EOL;
+echo 'Exam: ' . ($controller->getApprovalCriteria()->isApproved() ? 'Approved' : ' Not Approved')  . PHP_EOL;
+echo 'Exam score: ' . sprintf('%.2f%%', $controller->getApprovalCriteria()->getScore()) . PHP_EOL;
 
 echo 'Questions tagged to review later: ' . count($controller->getQuestionsTagged('review later'))  . PHP_EOL;
 echo 'Questions tagged as difficult questions: ' . count($controller->getQuestionsTagged('difficult question'))  . PHP_EOL;

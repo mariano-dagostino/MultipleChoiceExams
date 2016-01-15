@@ -4,6 +4,8 @@ namespace mdagostino\MultipleChoiceExams\ApprovalCriteria;
 
 interface ApprovalCriteriaInterface {
 
-  public function pass(array $questions);
+  public function isApproved(array $questions);
+
+  public function reset();
 
 }

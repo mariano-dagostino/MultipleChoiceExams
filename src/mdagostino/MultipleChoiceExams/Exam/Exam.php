@@ -13,28 +13,6 @@ class Exam implements ExamInterface {
   // A Boolean value that indicates if the user passed the exam after finish it.
   protected $pass = NULL;
 
-  protected $approval_criteria = NULL;
-
-
-  public function __construct(ApprovalCriteriaInterface $criteria) {
-    $this->approval_criteria = $criteria;
-  }
-
-  /**
-   * Set the Approval Criteria.
-   *
-   * @param ApprovalCriteriaInterface $criteria
-   */
-  public function setApprovalCriteria(ApprovalCriteriaInterface $criteria) {
-    $this->approval_criteria = $criteria;
-    return $this;
-  }
-
-  public function getApprovalCriteria() {
-    return $this->approval_criteria;
-  }
-
-
   /**
    * Answer a specific question of an exam.
    *
@@ -46,20 +24,6 @@ class Exam implements ExamInterface {
   public function answerQuestion($question_id, array $answer) {
     $this->getQuestion($question_id)->answer($answer);
     return $this;
-  }
-
-  /**
-   * Return TRUE if the user pass this exam. FALSE otherwise.
-   *
-   * @return boolean
-   */
-  public function isApproved() {
-
-    if (!isset($this->pass)) {
-      $this->pass = $this->getApprovalCriteria()->pass($this->getQuestions());
-    }
-
-    return $this->pass;
   }
 
   /**

@@ -6,15 +6,7 @@ use mdagostino\MultipleChoiceExams\ApprovalCriteria\ApprovalCriteriaInterface;
 
 interface ExamInterface {
 
-  public function __construct(ApprovalCriteriaInterface $criteria);
-
-  public function setApprovalCriteria(ApprovalCriteriaInterface $criteria);
-
-  public function getApprovalCriteria();
-
   public function answerQuestion($question_id, array $answer);
-
-  public function isApproved();
 
   public function questionsAnswered();
 

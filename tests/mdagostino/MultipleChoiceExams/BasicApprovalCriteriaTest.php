@@ -30,7 +30,7 @@ class BasicApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
     }
 
     // Exam not approved since 80 * 1 - 20 * 0,3 = 74
-    $this->assertFalse($this->criteria->pass($questions));
+    $this->assertFalse($this->criteria->isApproved($questions));
     $this->assertEquals($this->criteria->getScore(), 74);
   }
 
@@ -44,7 +44,7 @@ class BasicApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
       $questions[] = $question;
     }
 
-    $this->assertFalse($this->criteria->pass($questions));
+    $this->assertFalse($this->criteria->isApproved($questions));
     $this->assertEquals($this->criteria->getScore(), 0);
   }
 
@@ -64,7 +64,7 @@ class BasicApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
       $questions[] = $question;
     }
 
-    $this->assertFalse($this->criteria->pass($questions));
+    $this->assertFalse($this->criteria->isApproved($questions));
     $this->assertEquals($this->criteria->getScore(), 0);
   }
 
@@ -82,7 +82,7 @@ class BasicApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
     }
 
     // Exam is approved since 80 * 1 - 0 * 0,3 = 80
-    $this->assertTrue($this->criteria->pass($questions));
+    $this->assertTrue($this->criteria->isApproved($questions));
     $this->assertEquals($this->criteria->getScore(), 80);
   }
 
@@ -100,7 +100,7 @@ class BasicApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
     }
 
     // Exam not approved since 95 * 1 - 5 * 0,3 = 93.5
-    $this->assertTrue($this->criteria->pass($questions));
+    $this->assertTrue($this->criteria->isApproved($questions));
     $this->assertEquals($this->criteria->getScore(), 93.5);
   }
 }

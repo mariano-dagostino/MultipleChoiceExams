@@ -2,8 +2,8 @@
 
 namespace mdagostino\MultipleChoiceExams;
 
+use mdagostino\MultipleChoiceExams\Controller\ExamWithTimeController;
 use mdagostino\MultipleChoiceExams\Exam\Exam;
-use mdagostino\MultipleChoiceExams\Exam\ExamWithTimeController;
 use mdagostino\MultipleChoiceExams\Question\Question;
 use mdagostino\MultipleChoiceExams\Timer\ExamTimer;
 use mdagostino\MultipleChoiceExams\Question\QuestionInfo;
@@ -27,7 +27,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testExamBasicWorkflow() {
-    $exam = new Exam($this->approval_criteria);
+    $exam = new Exam();
 
     $question_evaluator = new QuestionEvaluatorSimple();
     for ($i=0; $i < 100; $i++) {
@@ -51,7 +51,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
     }
     $exam->setQuestions($questions);
 
-    $controller = new ExamWithTimeController($exam);
+    $controller = new ExamWithTimeController($exam, $this->approval_criteria);
 
     $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
 
@@ -74,14 +74,14 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
 
     $controller->finalizeExam();
 
-    $this->assertFalse($controller->getExam()->isApproved());
+    $this->assertFalse($controller->getApprovalCriteria()->isApproved($exam->getQuestions()));
     $this->assertEquals($controller->getQuestionsTagged('review_later'), array($questions[1], $questions[2]));
     $this->assertEquals($controller->getQuestionsTagged('hard_question'), array($questions[2]));
     $this->assertEmpty($controller->getQuestionsTagged('not used'));
   }
 
   public function testExamApproved() {
-    $exam = new Exam($this->approval_criteria);
+    $exam = new Exam();
 
     $question_evaluator = new QuestionEvaluatorSimple();
     for ($i=0; $i < 100; $i++) {
@@ -111,7 +111,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
     ->shouldReceive('start')->once()
     ->shouldReceive('stillHasTime')->times(70)->andReturn(TRUE);
 
-    $controller = new ExamWithTimeController($exam);
+    $controller = new ExamWithTimeController($exam, $this->approval_criteria);
     $controller->setTimer($examTimer);
     $controller->startExam();
 
@@ -125,12 +125,12 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
 
     $controller->finalizeExam();
 
-    $this->assertTrue($controller->getExam()->isApproved());
-    $this->assertEquals($controller->getExam()->getApprovalCriteria()->getScore(), 70);
+    $this->assertTrue($controller->getApprovalCriteria()->isApproved($exam->getQuestions()));
+    $this->assertEquals($controller->getApprovalCriteria()->getScore(), 70);
   }
 
   public function testFailedNoMoreTime() {
-    $exam = new Exam($this->approval_criteria);
+    $exam = new Exam();
 
     $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
 
@@ -160,7 +160,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
     }
     $exam->setQuestions($questions);
 
-    $controller = new ExamWithTimeController($exam);
+    $controller = new ExamWithTimeController($exam, $this->approval_criteria);
     $controller->setTimer($examTimer);
     $controller->startExam();
 
@@ -179,13 +179,13 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
 
     $controller->finalizeExam();
 
-    $this->assertFalse($controller->getExam()->isApproved());
-    $this->assertEquals($controller->getExam()->getApprovalCriteria()->getScore(), 3);
+    $this->assertFalse($controller->getApprovalCriteria()->isApproved($exam->getQuestions()));
+    $this->assertEquals($controller->getApprovalCriteria()->getScore(), 3);
   }
 
 
   public function testNoMoreTimeButApproved() {
-    $exam = new Exam($this->approval_criteria);
+    $exam = new Exam();
 
     $examTimer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
 
@@ -215,7 +215,7 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
     }
     $exam->setQuestions($questions);
 
-    $controller = new ExamWithTimeController($exam);
+    $controller = new ExamWithTimeController($exam, $this->approval_criteria);
     $controller->setTimer($examTimer);
     $controller->startExam();
 
@@ -236,8 +236,8 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
 
     $controller->finalizeExam();
 
-    $this->assertTrue($controller->getExam()->isApproved());
-    $this->assertEquals($controller->getExam()->getApprovalCriteria()->getScore(), 80);
+    $this->assertTrue($controller->getApprovalCriteria()->isApproved($exam->getQuestions()));
+    $this->assertEquals($controller->getApprovalCriteria()->getScore(), 80);
   }
 
 
