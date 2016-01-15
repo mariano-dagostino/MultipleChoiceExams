@@ -1,17 +1,17 @@
 <?php
 
-namespace mdagostino\MultipleChoiceExams\Exam;
+namespace mdagostino\MultipleChoiceExams\Controller;
 
 use mdagostino\MultipleChoiceExams\Exception\ExpiredTimeException;
 use mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface;
 
-class ExamWithTimeController extends AbstractExamController implements ExamControllerInterface {
+class ExamWithTimeController extends AbstractExamController implements ExamControllerInterface, ExamWithTimeInterface {
 
   protected $timer = NULL;
 
   public function getTimer() {
     if (!isset($this->timer)) {
-      throw new Exception("You must define a timer for ExamWithTimeController controllers");
+      throw new \Exception("You must define a timer for ExamWithTimeController controllers");
     }
 
     return $this->timer;

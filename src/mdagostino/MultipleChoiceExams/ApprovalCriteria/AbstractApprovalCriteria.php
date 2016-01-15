@@ -6,10 +6,25 @@ abstract class AbstractApprovalCriteria implements ApprovalCriteriaInterface {
 
   protected $score = 0;
 
-  public function pass(array $questions) {
-    $this->score = $this->calculateScore($questions);
+  protected $approved = NULL;
 
-    return $this->decideIfPass($this->score);
+  /**
+   * Return TRUE if the user pass this exam. FALSE otherwise.
+   *
+   * @return boolean
+   */
+  public function isApproved(array $questions) {
+    if (!isset($this->approved)) {
+      $this->score = $this->calculateScore($questions);
+      $this->approved = $this->decideIfPass($this->score);
+    }
+
+    return $this->approved;
+  }
+
+  public function reset() {
+    $this->score = 0;
+    $this->approved = NULL;
   }
 
   public function getScore() {

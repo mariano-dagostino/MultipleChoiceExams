@@ -1,10 +1,15 @@
 <?php
 
-namespace mdagostino\MultipleChoiceExams\Exam;
+namespace mdagostino\MultipleChoiceExams\Controller;
+
+use mdagostino\MultipleChoiceExams\Exam\ExamInterface;
+use mdagostino\MultipleChoiceExams\ApprovalCriteria\ApprovalCriteriaInterface;
 
 interface ExamControllerInterface {
 
-  public function __construct(ExamInterface $exam);
+  public function __construct(ExamInterface $exam, ApprovalCriteriaInterface $approval_criteria);
+
+  public function getApprovalCriteria();
 
   public function startExam();
 

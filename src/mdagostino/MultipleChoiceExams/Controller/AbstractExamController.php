@@ -1,6 +1,10 @@
 <?php
 
-namespace mdagostino\MultipleChoiceExams\Exam;
+namespace mdagostino\MultipleChoiceExams\Controller;
+
+use mdagostino\MultipleChoiceExams\Exam\ExamInterface;
+use mdagostino\MultipleChoiceExams\ApprovalCriteria\ApprovalCriteriaInterface;
+
 
 abstract class AbstractExamController implements ExamControllerInterface {
 
@@ -12,9 +16,16 @@ abstract class AbstractExamController implements ExamControllerInterface {
 
   protected $finalized = FALSE;
 
-  public function __construct(ExamInterface $exam) {
+  protected $approval_criteria = NULL;
+
+  public function __construct(ExamInterface $exam, ApprovalCriteriaInterface $approval_criteria) {
     $this->exam = $exam;
+    $this->approval_criteria = $approval_criteria;
     return $this;
+  }
+
+  public function getApprovalCriteria() {
+    return $this->approval_criteria;
   }
 
   public function startExam() {
@@ -35,7 +46,7 @@ abstract class AbstractExamController implements ExamControllerInterface {
 
   public function finalizeExam() {
     $this->finalized = TRUE;
-    $this->getExam()->isApproved();
+    $this->getApprovalCriteria()->isApproved($this->getExam()->getQuestions());
     return $this;
   }
 
