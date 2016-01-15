@@ -44,7 +44,7 @@ class Question implements QuestionInterface {
    *   An array of ids that represent the options chossed by the user
    */
   public function answer(array $keys) {
-    $valid_keys = $this->validKeys();
+    $valid_keys = $this->getAvailableAnswers();
     foreach ($keys as $key) {
       if (!in_array($key, $valid_keys)) {
         $title =  $this->getInfo()->getTitle();
@@ -67,15 +67,6 @@ class Question implements QuestionInterface {
     return $this->getQuestionEvaluator()->isCorrect($this);
   }
 
-  /**
-   * Returns an array of ids that are valid options to answer this question.
-   *
-   * @return array
-   */
-  protected function validKeys() {
-    return array_keys($this->getAvailableAnswers());
-  }
-
   public function setAnswers(array $answers, array $right_answers) {
     foreach ($right_answers as $key) {
       if (!isset($answers[$key])) {
@@ -84,7 +75,11 @@ class Question implements QuestionInterface {
       }
     }
 
-    $this->available_answers = $answers;
+    // Only save the keys on this object to reduce memory usage
+    $this->available_answers = array_keys($answers);
+    // Swapping the QuestionInfo interface could be used to retrive the info
+    // from another source like a database.
+    $this->getInfo()->setAnwsersDescriptions($answers);
     $this->right_answers = $right_answers;
     return $this;
   }

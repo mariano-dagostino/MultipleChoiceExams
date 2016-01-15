@@ -10,6 +10,8 @@ class QuestionInfo implements QuestionInfoInterface {
   // The question body
   protected $description;
 
+  protected $answer_descriptions;
+
   protected $tags = array();
 
   public function setTitle($title) {
@@ -28,6 +30,15 @@ class QuestionInfo implements QuestionInfoInterface {
 
   public function getDescription() {
     return $this->description;
+  }
+
+  public function getAnwsersDescriptions() {
+    return $this->answers_descriptions;
+  }
+
+  public function setAnwsersDescriptions(array $answer_descriptions) {
+    $this->answers_descriptions = $answer_descriptions;
+    return $this;
   }
 
   public function hasTag($tag) {
