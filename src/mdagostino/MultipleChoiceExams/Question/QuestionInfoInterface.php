@@ -12,9 +12,9 @@ interface QuestionInfoInterface {
 
   public function getDescription();
 
-  public function getAnwsersDescriptions();
+  public function getChoicesDescriptions();
 
-  public function setAnwsersDescriptions(array $answers);
+  public function setChoicesDescriptions(array $answers);
 
   public function hasTag($tag);
 

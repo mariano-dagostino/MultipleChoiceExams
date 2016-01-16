@@ -32,12 +32,12 @@ class QuestionInfo implements QuestionInfoInterface {
     return $this->description;
   }
 
-  public function getAnwsersDescriptions() {
-    return $this->answers_descriptions;
+  public function getChoicesDescriptions() {
+    return $this->choices_descriptions;
   }
 
-  public function setAnwsersDescriptions(array $answer_descriptions) {
-    $this->answers_descriptions = $answer_descriptions;
+  public function setChoicesDescriptions(array $answer_descriptions) {
+    $this->choices_descriptions = $answer_descriptions;
     return $this;
   }
 

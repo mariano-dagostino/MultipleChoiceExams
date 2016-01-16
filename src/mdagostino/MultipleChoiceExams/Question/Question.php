@@ -14,10 +14,10 @@ class Question implements QuestionInterface {
 
   // A keyed pair of key => text options where text is represent a possible
   // answer to this question.
-  protected $available_answers = array();
+  protected $choices = array();
 
   // An array of keys to identify the right answers of this question.
-  protected $right_answers = array();
+  protected $right_choices = array();
 
   // The selected options by the user to this question.
   protected $chossen_answers = array();
@@ -34,7 +34,7 @@ class Question implements QuestionInterface {
    * @return boolean
    */
   public function wasAnswered() {
-    return count($this->getChossenAnswers()) > 0;
+    return count($this->getAnswers()) > 0;
   }
 
   /**
@@ -44,7 +44,7 @@ class Question implements QuestionInterface {
    *   An array of ids that represent the options chossed by the user
    */
   public function answer(array $keys) {
-    $valid_keys = $this->getAvailableAnswers();
+    $valid_keys = $this->getChoices();
     foreach ($keys as $key) {
       if (!in_array($key, $valid_keys)) {
         $title =  $this->getInfo()->getTitle();
@@ -67,8 +67,8 @@ class Question implements QuestionInterface {
     return $this->getQuestionEvaluator()->isCorrect($this);
   }
 
-  public function setAnswers(array $answers, array $right_answers) {
-    foreach ($right_answers as $key) {
+  public function setChoices(array $answers, array $right_choices) {
+    foreach ($right_choices as $key) {
       if (!isset($answers[$key])) {
         $title =  $this->getInfo()->getTitle();
         throw new InvalidAnswerException("The key '$key' is not a valid answer for the question '$title'");
@@ -76,23 +76,23 @@ class Question implements QuestionInterface {
     }
 
     // Only save the keys on this object to reduce memory usage
-    $this->available_answers = array_keys($answers);
+    $this->choices = array_keys($answers);
     // Swapping the QuestionInfo interface could be used to retrive the info
     // from another source like a database.
-    $this->getInfo()->setAnwsersDescriptions($answers);
-    $this->right_answers = $right_answers;
+    $this->getInfo()->setChoicesDescriptions($answers);
+    $this->right_choices = $right_choices;
     return $this;
   }
 
-  public function getAvailableAnswers() {
-    return $this->available_answers;
+  public function getChoices() {
+    return $this->choices;
   }
 
-  public function getRightAnswers() {
-    return $this->right_answers;
+  public function getRightChoices() {
+    return $this->right_choices;
   }
 
-  public function getChossenAnswers() {
+  public function getAnswers() {
     return $this->chossen_answers;
   }
 

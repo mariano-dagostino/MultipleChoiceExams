@@ -23,7 +23,7 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     $this->single_evaluator
       ->shouldReceive('isCorrect')
       ->andReturnUsing(function($question) {
-        return $question->getChossenAnswers() == array(2);
+        return $question->getAnswers() == array(2);
       });
 
 
@@ -39,7 +39,7 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     );
 
     $this->single_choice_question
-      ->setAnswers($this->single_choice_question_answers, array(2));
+      ->setChoices($this->single_choice_question_answers, array(2));
 
     $this->single_choice_question
       ->getInfo()
@@ -50,8 +50,8 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     $this->multiple_evaluator
       ->shouldReceive('isCorrect')
       ->andReturnUsing(function($question) {
-        return $question->getChossenAnswers() == array('mercury', 'venus') ||
-               $question->getChossenAnswers() == array('venus', 'mercury');
+        return $question->getAnswers() == array('mercury', 'venus') ||
+               $question->getAnswers() == array('venus', 'mercury');
       });
 
     $this->multiple_choice_question_info = new QuestionInfo();
@@ -69,7 +69,7 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     );
 
     $this->multiple_choice_question
-      ->setAnswers($this->multiple_choice_question_answers, array('mercury', 'venus'));
+      ->setChoices($this->multiple_choice_question_answers, array('mercury', 'venus'));
 
     $this->multiple_choice_question
       ->getInfo()
@@ -81,12 +81,12 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
 
     $this->assertEquals($this->single_choice_question->getInfo()->getTitle(), 'Basic Math');
     $this->assertEquals($this->single_choice_question->getInfo()->getDescription(), 'What is the result of 1+1?');
-    $this->assertEquals($this->single_choice_question->getInfo()->getAnwsersDescriptions(), $this->single_choice_question_answers);
+    $this->assertEquals($this->single_choice_question->getInfo()->getChoicesDescriptions(), $this->single_choice_question_answers);
     $this->assertFalse($this->single_choice_question->wasAnswered());
 
     $this->assertEquals($this->multiple_choice_question->getInfo()->getTitle(), 'Planets');
     $this->assertEquals($this->multiple_choice_question->getInfo()->getDescription(), 'What planets are between the Sun and the Earth?');
-    $this->assertEquals($this->multiple_choice_question->getInfo()->getAnwsersDescriptions(), $this->multiple_choice_question_answers);
+    $this->assertEquals($this->multiple_choice_question->getInfo()->getChoicesDescriptions(), $this->multiple_choice_question_answers);
     $this->assertFalse($this->multiple_choice_question->wasAnswered());
   }
 
@@ -161,7 +161,7 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
    */
   public function testInvalidAnswerKey() {
     $this->multiple_choice_question
-      ->setAnswers($this->multiple_choice_question_answers, array('invalid key'));
+      ->setChoices($this->multiple_choice_question_answers, array('invalid key'));
   }
 
   public function testCorrectCount() {

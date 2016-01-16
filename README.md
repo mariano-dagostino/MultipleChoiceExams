@@ -28,7 +28,7 @@ $question_evaluator = new QuestionEvaluatorSimple();
 
 $question = new Question($question_evaluator, new QuestionInfo());
 $question
-  ->setAnswers(
+  ->setChoices(
     ['python' => 'Python', 'php' => 'PHP', 'go' => 'Go', 'java' => 'Java'],
     ['python'])
   ->getInfo()
@@ -40,7 +40,7 @@ $questions[] = $question;
 
 $question = new Question($question_evaluator, new QuestionInfo());
 $question
-  ->setAnswers(
+  ->setChoices(
     ['cobol' => 'Cobol', 'javascript' => 'Javascript', 'asm' => 'Assembler'],
     ['javascript'])
   ->getInfo()
@@ -51,7 +51,7 @@ $questions[] = $question;
 
 $question = new Question($question_evaluator, new QuestionInfo());
 $question
-  ->setAnswers([
+  ->setChoices([
     'Me' => 'Mercury',
     'Ve' => 'Venus',
     'Ea' => 'Earth',

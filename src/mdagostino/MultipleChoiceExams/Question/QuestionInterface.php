@@ -14,13 +14,13 @@ interface QuestionInterface {
 
 	public function isCorrect();
 
-	public function setAnswers(array $answers, array $right_answers);
+	public function setChoices(array $answers, array $right_answers);
 
-	public function getAvailableAnswers();
+	public function getChoices();
 
-	public function getRightAnswers();
+	public function getRightChoices();
 
-	public function getChossenAnswers();
+	public function getAnswers();
 
 	public function getQuestionEvaluator();
 }

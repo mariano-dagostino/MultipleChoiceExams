@@ -7,14 +7,14 @@ class QuestionEvaluatorSimple implements QuestionEvaluatorInterface {
   public function isCorrect(QuestionInterface $question) {
     // A question is considered correct if the user selected the right choices
     // and didn't select any wrong choice.
-    return $this->questionHitCount($question) == count($question->getRightAnswers()) &&
+    return $this->questionHitCount($question) == count($question->getRightChoices()) &&
       $this->questionMissCount($question) == 0;
   }
 
   protected function questionHitCount($question) {
     $correct_choices = 0;
-    foreach ($question->getChossenAnswers() as $key) {
-      if (in_array($key, $question->getRightAnswers())) {
+    foreach ($question->getAnswers() as $key) {
+      if (in_array($key, $question->getRightChoices())) {
         $correct_choices++;
       }
     }
@@ -23,8 +23,8 @@ class QuestionEvaluatorSimple implements QuestionEvaluatorInterface {
 
   protected function questionMissCount($question) {
     $incorrect_choices = 0;
-    foreach ($question->getChossenAnswers() as $key) {
-      if (!in_array($key, $question->getRightAnswers())) {
+    foreach ($question->getAnswers() as $key) {
+      if (!in_array($key, $question->getRightChoices())) {
         $incorrect_choices++;
       }
     }
