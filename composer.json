@@ -12,7 +12,8 @@
   "require": {
   },
   "require-dev": {
-    "mockery/mockery": "0.9.*@dev"
+    "mockery/mockery": "0.9.*@dev",
+    "satooshi/php-coveralls": "^1.0"
   },
   "autoload": {
     "psr-0": {"mdagostino": "src/"}
