@@ -1,11 +1,17 @@
 #MultipleChoiceExams
 
-MultipleChoiceExams is a set of PHP clases to manage Multiple Choice Exams. This clases are able to adapt to different CMS, as Drupal, so the CMS only have the responsability of managing the content of the database.
+
+[![Build Status](https://travis-ci.org/mariano-dagostino/MultipleChoiceExams.svg?branch=master)](https://travis-ci.org/mariano-dagostino/MultipleChoiceExams)
+
+
+MultipleChoiceExams is a set of PHP clases to manage Multiple Choice Exams. This
+clases are able to adapt to different CMS, as Drupal, so the CMS only have the
+responsability of managing the content of the database.
 
 
 #Example
-This is how the code works:
 
+This is how the code works:
 
 ```php
 <?php
@@ -105,4 +111,3 @@ echo 'Questions tagged to review later: ' . count($controller->getQuestionsTagge
 echo 'Questions tagged as difficult questions: ' . count($controller->getQuestionsTagged('difficult question'))  . PHP_EOL;
 
 ```
-[![Build Status](https://travis-ci.org/mariano-dagostino/MultipleChoiceExams.svg?branch=master)](https://travis-ci.org/mariano-dagostino/MultipleChoiceExams)
