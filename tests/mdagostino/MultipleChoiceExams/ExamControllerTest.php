@@ -107,13 +107,14 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
     $first_question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
     $first_question_info = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInfoInterface');
     $first_question_info->shouldReceive('tag')->once()->with($tag);
-    $first_question_info->shouldReceive('hasTag')->twice()->andReturn(TRUE, FALSE);
     $first_question_info->shouldReceive('untag')->once()->with($tag);
+    $first_question_info->shouldReceive('hasTag')->twice()->andReturn(TRUE, FALSE);
     $first_question->shouldReceive('getInfo')->andReturn($first_question_info);
 
     $second_question = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInterface');
     $second_question_info = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionInfoInterface');
     $second_question_info->shouldReceive('tag')->never();
+    $second_question_info->shouldReceive('untag')->never();
     $second_question_info->shouldReceive('hasTag')->twice()->andReturn(FALSE, FALSE);
     $second_question->shouldReceive('getInfo')->andReturn($second_question_info);
 
@@ -154,17 +155,21 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
     $this->controller->moveToNextQuestion();
     $this->assertEquals($this->controller->getCurrentQuestion(), $second_question);
 
-    // Mark the third question to not be reviewd later
+    // Mark the third question to be reviewed later
     $this->controller->moveToNextQuestion();
     $this->assertEquals($this->controller->getCurrentQuestion(), $third_question);
     $this->controller->tagCurrentQuestion($tag);
 
-    $this->assertEquals($this->controller->getQuestionsTagged($tag), array($first_question, $third_question));
+    $this->assertEquals($this->controller->getQuestionsTagged($tag),
+                        array(0 => $first_question, 2 => $third_question),
+                        'First and Third question marked to be reviewed later.');
 
     $this->controller->moveToFirstQuestion();
     $this->assertEquals($this->controller->getCurrentQuestion(), $first_question);
     $this->controller->untagCurrentQuestion($tag);
-    $this->assertEquals($this->controller->getQuestionsTagged($tag), array($third_question));
+    $this->assertEquals($this->controller->getQuestionsTagged($tag),
+                        array(2 => $third_question),
+                        'Only Third question marked to be reviewed later.');
 
   }
 

@@ -39,7 +39,8 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     );
 
     $this->single_choice_question
-      ->setChoices($this->single_choice_question_answers, array(2));
+      ->setChoices($this->single_choice_question_answers)
+      ->setRightChoices(array(2));
 
     $this->single_choice_question
       ->getInfo()
@@ -69,7 +70,8 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     );
 
     $this->multiple_choice_question
-      ->setChoices($this->multiple_choice_question_answers, array('mercury', 'venus'));
+      ->setChoices($this->multiple_choice_question_answers)
+      ->setRightChoices(array('mercury', 'venus'));
 
     $this->multiple_choice_question
       ->getInfo()
@@ -148,7 +150,7 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @expectedException mdagostino\MultipleChoiceExams\Exception\InvalidAnswerException
-   * @expectedExceptionMessage The key 'moon' is not a valid answer for the question 'Planets'
+   * @expectedExceptionMessage You cannot use the keys (moon) as a valid choices. Valid choices are: (mercury, venus, earth, mars, jupiter, saturn, uranus, neptune)
    */
   public function testInvalidAnswer() {
     $planet_question = $this->multiple_choice_question;
@@ -157,11 +159,12 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @expectedException mdagostino\MultipleChoiceExams\Exception\InvalidAnswerException
-   * @expectedExceptionMessage The key 'invalid key' is not a valid answer for the question 'Planets'
+   * @expectedExceptionMessage You cannot use the keys (a, b) as a valid choices. Valid choices are: (mercury, venus, earth, mars, jupiter, saturn, uranus, neptune)
    */
-  public function testInvalidAnswerKey() {
+  public function testInvalidChoicesKey() {
     $this->multiple_choice_question
-      ->setChoices($this->multiple_choice_question_answers, array('invalid key'));
+      ->setChoices($this->multiple_choice_question_answers)
+      ->setRightChoices(array('a', 'b'));
   }
 
   public function testCorrectCount() {

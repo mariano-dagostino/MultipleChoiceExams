@@ -10,6 +10,8 @@ interface ExamInterface {
 
   public function questionsAnswered();
 
+  public function questionsAnsweredCount();
+
   public function getQuestions();
 
   public function getQuestion($id);

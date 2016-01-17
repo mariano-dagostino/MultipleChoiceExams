@@ -26,19 +26,19 @@ class Exam implements ExamInterface {
     return $this;
   }
 
+  public function questionsAnswered() {
+    return array_filter($this->getQuestions(), function($question) {
+      return $question->wasAnswered();
+    });
+  }
+
   /**
    * Returns the number of questions the user alredy answered.
    *
    * @return int
    */
-  public function questionsAnswered() {
-    $count = 0;
-    foreach ($this->getQuestions() as $question) {
-      if ($question->wasAnswered()) {
-        $count++;
-      }
-    }
-    return $count;
+  public function questionsAnsweredCount() {
+    return count($this->questionsAnswered());
   }
 
   /**

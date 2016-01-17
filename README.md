@@ -35,9 +35,8 @@ $question_evaluator = new QuestionEvaluatorSimple();
 
 $question = new Question($question_evaluator, new QuestionInfo());
 $question
-  ->setChoices(
-    ['python' => 'Python', 'php' => 'PHP', 'go' => 'Go', 'java' => 'Java'],
-    ['python'])
+  ->setChoices(['python' => 'Python', 'php' => 'PHP', 'go' => 'Go', 'java' => 'Java'])
+  ->setRightChoices(['python'])
   ->getInfo()
     ->setTitle('Django language')
     ->setDescription('In which language is written the Django framework');
@@ -47,9 +46,8 @@ $questions[] = $question;
 
 $question = new Question($question_evaluator, new QuestionInfo());
 $question
-  ->setChoices(
-    ['cobol' => 'Cobol', 'javascript' => 'Javascript', 'asm' => 'Assembler'],
-    ['javascript'])
+  ->setChoices(['cobol' => 'Cobol', 'javascript' => 'Javascript', 'asm' => 'Assembler'])
+  ->setRightChoices(['javascript'])
   ->getInfo()
     ->setTitle('Languages that runs on browsers')
     ->setDescription('Witch programming language can run on web browsers?');
@@ -67,8 +65,8 @@ $question
     'Sa' => 'Saturn',
     'Ur' => 'Uranus',
     'Ne' => 'Neptune'
-    ],
-    ['Ju', 'Sa', 'Ur', 'Ne'])
+    ])
+  ->setRightChoices(['Ju', 'Sa', 'Ur', 'Ne'])
   ->getInfo()
     ->setTitle('Planets')
     ->setDescription('Wich planets of the Solar System are considered "giant planets"?');
@@ -101,13 +99,13 @@ $controller->moveToNextQuestion();
 $controller->answerCurrentQuestion(['Ju', 'Sa']); // Wrong answer (incomplete)
 $controller->tagCurrentQuestion('review later');
 $controller->tagCurrentQuestion('difficult question');
+$controller->untagCurrentQuestion('review later');
 $controller->moveToNextQuestion();
 
 $controller->finalizeExam();
 
-echo 'Exam: ' . ($controller->getApprovalCriteria()->isApproved() ? 'Approved' : ' Not Approved')  . PHP_EOL;
+echo 'Exam: ' . ($controller->getApprovalCriteria()->isApproved($exam->getQuestions()) ? 'Approved' : ' Not Approved')  . PHP_EOL;
 echo 'Exam score: ' . sprintf('%.2f%%', $controller->getApprovalCriteria()->getScore()) . PHP_EOL;
-
 echo 'Questions tagged to review later: ' . count($controller->getQuestionsTagged('review later'))  . PHP_EOL;
 echo 'Questions tagged as difficult questions: ' . count($controller->getQuestionsTagged('difficult question'))  . PHP_EOL;
 

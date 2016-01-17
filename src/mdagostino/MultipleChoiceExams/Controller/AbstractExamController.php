@@ -83,13 +83,9 @@ abstract class AbstractExamController implements ExamControllerInterface {
   }
 
   public function getQuestionsTagged($tag) {
-    $questions_tagged = array();
-    foreach ($this->getExam()->getQuestions() as $question) {
-      if ($question->getInfo()->hasTag($tag)) {
-        $questions_tagged[] = $question;
-      }
-    }
-    return $questions_tagged;
+    return array_filter($this->getExam()->getQuestions(), function($question) use ($tag) {
+      return $question->getInfo()->hasTag($tag);
+    });
   }
 
   public function getExam() {

@@ -42,7 +42,8 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
       $question_info = new QuestionInfo();
       $question = new Question($question_evaluator, $question_info);
       $question
-        ->setChoices($available_answers, $right_answers)
+        ->setChoices($available_answers)
+        ->setRightChoices($right_answers)
         ->getInfo()
           ->setTitle('Question ' . $i)
           ->setDescription('Description for question ' . $i);
@@ -75,8 +76,8 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
     $controller->finalizeExam();
 
     $this->assertFalse($controller->getApprovalCriteria()->isApproved($exam->getQuestions()));
-    $this->assertEquals($controller->getQuestionsTagged('review_later'), array($questions[1], $questions[2]));
-    $this->assertEquals($controller->getQuestionsTagged('hard_question'), array($questions[2]));
+    $this->assertEquals($controller->getQuestionsTagged('review_later'), array(1 => $questions[1], 2 => $questions[2]));
+    $this->assertEquals($controller->getQuestionsTagged('hard_question'), array(2 => $questions[2]));
     $this->assertEmpty($controller->getQuestionsTagged('not used'));
   }
 
@@ -96,7 +97,8 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
       $question_info = new QuestionInfo();
       $question = new Question($question_evaluator, $question_info);
       $question
-        ->setChoices($available_answers, $right_answers)
+        ->setChoices($available_answers)
+        ->setRightChoices($right_answers)
         ->getInfo()
           ->setTitle('Question ' . $i)
           ->setDescription('Description for question ' . $i);
@@ -151,7 +153,8 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
       $question_info = new QuestionInfo();
       $question = new Question($question_evaluator, $question_info);
       $question
-        ->setChoices($available_answers, $right_answers)
+        ->setChoices($available_answers)
+        ->setRightChoices($right_answers)
         ->getInfo()
           ->setTitle('Question ' . $i)
           ->setDescription('Description for question ' . $i);
@@ -206,7 +209,8 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
       $question_info = new QuestionInfo();
       $question = new Question($question_evaluator, $question_info);
       $question
-        ->setChoices($available_answers, $right_answers)
+        ->setChoices($available_answers)
+        ->setRightChoices($right_answers)
         ->getInfo()
           ->setTitle('Question ' . $i)
           ->setDescription('Description for question ' . $i);

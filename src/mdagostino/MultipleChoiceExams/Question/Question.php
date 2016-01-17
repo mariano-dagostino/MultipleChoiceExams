@@ -44,13 +44,17 @@ class Question implements QuestionInterface {
    *   An array of ids that represent the options chossed by the user
    */
   public function answer(array $keys) {
-    $valid_keys = $this->getChoices();
-    foreach ($keys as $key) {
-      if (!in_array($key, $valid_keys)) {
-        $title =  $this->getInfo()->getTitle();
-        throw new InvalidAnswerException("The key '$key' is not a valid answer for the question '$title'");
-      }
+    $invalid_keys = array_diff($keys, $this->getChoices());
+
+    if (!empty($invalid_keys)) {
+      $invalid = implode(', ', $invalid_keys);
+      $valid = implode(', ', $this->getChoices());
+
+      throw new InvalidAnswerException(
+        "You cannot use the keys ($invalid) as a valid choices. Valid choices are: ($valid)"
+      );
     }
+
 
     $this->chossen_answers = $keys;
     return $this;
@@ -67,20 +71,16 @@ class Question implements QuestionInterface {
     return $this->getQuestionEvaluator()->isCorrect($this);
   }
 
-  public function setChoices(array $answers, array $right_choices) {
-    foreach ($right_choices as $key) {
-      if (!isset($answers[$key])) {
-        $title =  $this->getInfo()->getTitle();
-        throw new InvalidAnswerException("The key '$key' is not a valid answer for the question '$title'");
-      }
-    }
-
+  public function setChoices(array $choices) {
     // Only save the keys on this object to reduce memory usage
-    $this->choices = array_keys($answers);
+    $this->choices = array_keys($choices);
     // Swapping the QuestionInfo interface could be used to retrive the info
     // from another source like a database.
-    $this->getInfo()->setChoicesDescriptions($answers);
-    $this->right_choices = $right_choices;
+    $this->getInfo()->setChoicesDescriptions($choices);
+
+    if (isset($this->right_choices)) {
+      $this->validateIntegrity();
+    }
     return $this;
   }
 
@@ -88,8 +88,30 @@ class Question implements QuestionInterface {
     return $this->choices;
   }
 
+  public function setRightChoices(array $right_choices) {
+    $this->right_choices = $right_choices;
+
+    if (isset($this->choices)) {
+      $this->validateIntegrity();
+    }
+    return $this;
+  }
+
   public function getRightChoices() {
     return $this->right_choices;
+  }
+
+  protected function validateIntegrity() {
+    $invalid_keys = array_diff($this->right_choices, $this->choices);
+
+    if (!empty($invalid_keys)) {
+      $invalid = implode(', ', $invalid_keys);
+      $valid = implode(', ', $this->choices);
+
+      throw new InvalidAnswerException(
+        "You cannot use the keys ($invalid) as a valid choices. Valid choices are: ($valid)"
+      );
+    }
   }
 
   public function getAnswers() {

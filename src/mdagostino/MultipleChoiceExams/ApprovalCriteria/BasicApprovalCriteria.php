@@ -51,10 +51,8 @@ class BasicApprovalCriteria extends AbstractApprovalCriteria implements Approval
   public function calculateScore(array $questions) {
     $correct = 0;
     $incorrect = 0;
-    foreach ($questions as $question) {
-      if ($question->wasAnswered()) {
-        $question->isCorrect() ? $correct++ : $incorrect++;
-      }
+    foreach ($this->answeredQuestions($questions) as $question) {
+      $question->isCorrect() ? $correct++ : $incorrect++;
     }
     $question_count = count($questions);
     $not_answered = $question_count - ($correct + $incorrect);
@@ -65,6 +63,12 @@ class BasicApprovalCriteria extends AbstractApprovalCriteria implements Approval
     $percent -= $this->getUnansweredQuestionsRest() * $not_answered;
 
     return $percent / $question_count * 100.0;
+  }
+
+  protected function answeredQuestions(array $questions) {
+    return array_filter($questions, function($question) {
+      return $question->wasAnswered();
+    });
   }
 
   public function decideIfPass($score) {

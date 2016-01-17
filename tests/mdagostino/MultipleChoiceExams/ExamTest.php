@@ -15,7 +15,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
 
     $exam = new Exam();
 
-    $this->assertEquals($exam->questionsAnswered(), 0);
+    $this->assertEquals($exam->questionsAnsweredCount(), 0);
     $this->assertEquals($exam->getQuestionCount(), 0);
 
     // Add ten questions to this exam
@@ -31,7 +31,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
     $exam->setQuestions($questions);
     $this->assertEquals($exam->getQuestionCount(), 10);
     // Five questions should be answered
-    $this->assertEquals($exam->questionsAnswered(), 5);
+    $this->assertEquals($exam->questionsAnsweredCount(), 5);
   }
 
   public function testExamQuestionAnswering() {
@@ -60,7 +60,7 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
     $exam->answerQuestion(1, array('my answer'));
 
     // Only one question should be answered
-    $this->assertEquals($exam->questionsAnswered(), 1);
+    $this->assertEquals($exam->questionsAnsweredCount(), 1);
   }
 
 
