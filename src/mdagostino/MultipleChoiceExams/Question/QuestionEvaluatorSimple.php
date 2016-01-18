@@ -6,29 +6,27 @@ class QuestionEvaluatorSimple implements QuestionEvaluatorInterface {
 
   public function isCorrect(QuestionInterface $question) {
     // A question is considered correct if the user selected the right choices
+    $right_choices_count = count($question->getRightChoices());
+    if ($this->questionHitCount($question) != $right_choices_count) {
+      return FALSE;
+    }
+
     // and didn't select any wrong choice.
-    return $this->questionHitCount($question) == count($question->getRightChoices()) &&
-      $this->questionMissCount($question) == 0;
+    return $this->questionMissCount($question) == 0;
   }
 
   protected function questionHitCount($question) {
-    $correct_choices = 0;
-    foreach ($question->getAnswers() as $key) {
-      if (in_array($key, $question->getRightChoices())) {
-        $correct_choices++;
-      }
-    }
-    return $correct_choices;
+    $answer = $question->getAnswers();
+    $right_choices = $question->getRightChoices();
+    return count(array_intersect($answer, $right_choices));
   }
 
   protected function questionMissCount($question) {
-    $incorrect_choices = 0;
-    foreach ($question->getAnswers() as $key) {
-      if (!in_array($key, $question->getRightChoices())) {
-        $incorrect_choices++;
-      }
-    }
-    return $incorrect_choices;
+    $answer = $question->getAnswers();
+    $choices = $question->getChoices();
+    $right_choices = $question->getRightChoices();
+    $wrong_choices = array_diff($choices, $right_choices);
+    return count(array_intersect($answer, $wrong_choices));
   }
 
 }
