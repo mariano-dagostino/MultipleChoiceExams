@@ -44,9 +44,8 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
       $question
         ->setChoices($available_answers)
         ->setRightChoices($right_answers)
-        ->getInfo()
-          ->setTitle('Question ' . $i)
-          ->setDescription('Description for question ' . $i);
+        ->setTitle('Question ' . $i)
+        ->setDescription('Description for question ' . $i);
 
       $questions[] = $question;
     }
@@ -99,9 +98,8 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
       $question
         ->setChoices($available_answers)
         ->setRightChoices($right_answers)
-        ->getInfo()
-          ->setTitle('Question ' . $i)
-          ->setDescription('Description for question ' . $i);
+        ->setTitle('Question ' . $i)
+        ->setDescription('Description for question ' . $i);
 
       $questions[] = $question;
     }
@@ -155,9 +153,8 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
       $question
         ->setChoices($available_answers)
         ->setRightChoices($right_answers)
-        ->getInfo()
-          ->setTitle('Question ' . $i)
-          ->setDescription('Description for question ' . $i);
+        ->setTitle('Question ' . $i)
+        ->setDescription('Description for question ' . $i);
 
       $questions[] = $question;
     }
@@ -211,9 +208,8 @@ class IntegrationExamTest extends \PHPUnit_Framework_TestCase {
       $question
         ->setChoices($available_answers)
         ->setRightChoices($right_answers)
-        ->getInfo()
-          ->setTitle('Question ' . $i)
-          ->setDescription('Description for question ' . $i);
+        ->setTitle('Question ' . $i)
+        ->setDescription('Description for question ' . $i);
 
       $questions[] = $question;
     }

@@ -79,11 +79,13 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
 
     // Try out of range movements
     $controller->moveToLastQuestion();
+    $this->assertTrue($controller->isLastQuestion());
     $controller->moveToNextQuestion();
     $this->assertEquals($controller->getCurrentQuestionIndex(), 10, "The last question is numbered with 10");
 
     // Try negative movement
     $controller->moveToFirstQuestion();
+    $this->assertTrue($controller->isFirstQuestion());
     $controller->moveToPreviousQuestion();
     $this->assertEquals($controller->getCurrentQuestionIndex(), 1, "The first question is numbered with 1");
   }

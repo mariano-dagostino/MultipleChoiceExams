@@ -35,27 +35,27 @@ $question_evaluator = new QuestionEvaluatorSimple();
 
 $question = new Question($question_evaluator, new QuestionInfo());
 $question
+  ->setTitle('Django language')
+  ->setDescription('In which language is written the Django framework');
   ->setChoices(['python' => 'Python', 'php' => 'PHP', 'go' => 'Go', 'java' => 'Java'])
   ->setRightChoices(['python'])
-  ->getInfo()
-    ->setTitle('Django language')
-    ->setDescription('In which language is written the Django framework');
 $questions[] = $question;
 
 
 
 $question = new Question($question_evaluator, new QuestionInfo());
 $question
+  ->setTitle('Languages that runs on browsers')
+  ->setDescription('Witch programming language can run on web browsers?');
   ->setChoices(['cobol' => 'Cobol', 'javascript' => 'Javascript', 'asm' => 'Assembler'])
   ->setRightChoices(['javascript'])
-  ->getInfo()
-    ->setTitle('Languages that runs on browsers')
-    ->setDescription('Witch programming language can run on web browsers?');
 $questions[] = $question;
 
 
 $question = new Question($question_evaluator, new QuestionInfo());
 $question
+  ->setTitle('Planets')
+  ->setDescription('Wich planets of the Solar System are considered "giant planets"?');
   ->setChoices([
     'Me' => 'Mercury',
     'Ve' => 'Venus',
@@ -67,9 +67,6 @@ $question
     'Ne' => 'Neptune'
     ])
   ->setRightChoices(['Ju', 'Sa', 'Ur', 'Ne'])
-  ->getInfo()
-    ->setTitle('Planets')
-    ->setDescription('Wich planets of the Solar System are considered "giant planets"?');
 $questions[] = $question;
 
 

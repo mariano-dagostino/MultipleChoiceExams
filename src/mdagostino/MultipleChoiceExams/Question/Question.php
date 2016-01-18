@@ -125,4 +125,20 @@ class Question implements QuestionInterface {
   public function getQuestionEvaluator() {
     return $this->question_evaluator;
   }
+
+  public function __call($method, $arguments) {
+
+    $method_to_call = array($this->info, $method);
+
+    if (! is_callable($method_to_call, FALSE)) {
+      throw new \Exception("There is no method call " . $method);
+    }
+
+    $return = call_user_func_array(array($this->info, $method), $arguments);
+
+    if ($return === $this->info) {
+      return $this;
+    }
+    return $return;
+  }
 }

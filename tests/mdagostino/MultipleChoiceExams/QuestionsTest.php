@@ -43,9 +43,8 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
       ->setRightChoices(array(2));
 
     $this->single_choice_question
-      ->getInfo()
-        ->setTitle('Basic Math')
-        ->setDescription('What is the result of 1+1?');
+      ->setTitle('Basic Math')
+      ->setDescription('What is the result of 1+1?');
 
     $this->multiple_evaluator = \Mockery::mock('mdagostino\MultipleChoiceExams\Question\QuestionEvaluatorInterface');
     $this->multiple_evaluator
@@ -74,22 +73,46 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
       ->setRightChoices(array('mercury', 'venus'));
 
     $this->multiple_choice_question
-      ->getInfo()
-        ->setTitle('Planets')
-        ->setDescription('What planets are between the Sun and the Earth?');
+      ->setTitle('Planets')
+      ->setDescription('What planets are between the Sun and the Earth?');
   }
 
   public function testQuestionCreation() {
 
-    $this->assertEquals($this->single_choice_question->getInfo()->getTitle(), 'Basic Math');
-    $this->assertEquals($this->single_choice_question->getInfo()->getDescription(), 'What is the result of 1+1?');
-    $this->assertEquals($this->single_choice_question->getInfo()->getChoicesDescriptions(), $this->single_choice_question_answers);
+    $this->assertEquals($this->single_choice_question->getTitle(), 'Basic Math');
+    $this->assertEquals($this->single_choice_question->getDescription(), 'What is the result of 1+1?');
+    $this->assertEquals($this->single_choice_question->getChoicesDescriptions(), $this->single_choice_question_answers);
     $this->assertFalse($this->single_choice_question->wasAnswered());
 
-    $this->assertEquals($this->multiple_choice_question->getInfo()->getTitle(), 'Planets');
-    $this->assertEquals($this->multiple_choice_question->getInfo()->getDescription(), 'What planets are between the Sun and the Earth?');
-    $this->assertEquals($this->multiple_choice_question->getInfo()->getChoicesDescriptions(), $this->multiple_choice_question_answers);
+    $this->assertEquals($this->multiple_choice_question->getTitle(), 'Planets');
+    $this->assertEquals($this->multiple_choice_question->getDescription(), 'What planets are between the Sun and the Earth?');
+    $this->assertEquals($this->multiple_choice_question->getChoicesDescriptions(), $this->multiple_choice_question_answers);
     $this->assertFalse($this->multiple_choice_question->wasAnswered());
+  }
+
+  public function testQuestionTagging() {
+    $this->single_choice_question->tag('tag 1');
+    $this->single_choice_question->tag('tag 2');
+    $this->single_choice_question->tag('tag 3');
+
+    $this->assertTrue($this->single_choice_question->hasTag('tag 1'));
+    $this->assertTrue($this->single_choice_question->hasTag('tag 2'));
+    $this->assertFalse($this->single_choice_question->hasTag('tag 4'));
+
+    $this->single_choice_question->unTag('tag 2');
+    $this->assertTrue($this->single_choice_question->hasTag('tag 1'));
+    $this->assertFalse($this->single_choice_question->hasTag('tag 2'));
+    $this->assertTrue($this->single_choice_question->hasTag('tag 3'));
+  }
+
+  public function testMagicMethods() {
+    $info = new QuestionInfo();
+    $question = new Question($this->single_evaluator, $info);
+
+    $this->assertEquals($question->setTitle('test'), $question);
+    $this->assertEquals($question->setChoices(['a' => 'A']), $question);
+    $this->assertEquals($question->getTitle('test'), 'test');
+    $this->assertEquals($question->getChoices(), ['a']);
   }
 
   public function testQuestionCorrect() {
