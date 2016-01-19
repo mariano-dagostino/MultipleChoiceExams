@@ -32,6 +32,9 @@ class BasicApprovalCriteriaTest extends \PHPUnit_Framework_TestCase {
     // Exam not approved since 80 * 1 - 20 * 0,3 = 74
     $this->assertFalse($this->criteria->isApproved($questions));
     $this->assertEquals($this->criteria->getScore(), 74);
+
+    $this->criteria->reset();
+    $this->assertEquals($this->criteria->getScore(), 0);
   }
 
   public function testInBlankExam() {
