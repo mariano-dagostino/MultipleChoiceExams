@@ -15,6 +15,10 @@ interface ExamControllerInterface {
 
   public function finalizeExam();
 
+  public function answerCurrentQuestion(array $answer);
+
+  public function answerQuestion($id, array $answer);
+
   public function moveToFirstQuestion();
 
   public function moveToNextQuestion();

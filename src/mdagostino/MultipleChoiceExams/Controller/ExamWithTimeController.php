@@ -25,15 +25,20 @@ class ExamWithTimeController extends AbstractExamController implements ExamContr
   public function startExam() {
     parent::startExam();
     $this->getTimer()->start();
+    return $this;
   }
 
   public function answerCurrentQuestion(array $answer) {
+    $this->answerQuestion($this->getCurrentQuestionIndex() - 1, $answer);
+  }
+
+  public function answerQuestion($id, array $answer) {
     if ($this->getTimer()->stillHasTime() == FALSE) {
       $this->finalizeExam();
       throw new ExpiredTimeException("There is no left time to complete the exam.");
     }
 
-    $this->getExam()->answerQuestion($this->getCurrentQuestionIndex() - 1, $answer);
+    $this->getExam()->answerQuestion($id, $answer);
   }
 
 }

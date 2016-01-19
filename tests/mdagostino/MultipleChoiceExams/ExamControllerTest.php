@@ -34,7 +34,7 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
     $this->exam_timer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
 
     $this->exam_timer
-    ->shouldReceive('start')->once()
+    ->shouldReceive('start')
     ->shouldReceive('stillHasTime')->andReturn(TRUE);
 
     $this->exam = \Mockery::mock('mdagostino\MultipleChoiceExams\Exam\ExamInterface');
@@ -55,6 +55,29 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
     $controller->startExam();
     $this->assertEquals($controller->getCurrentQuestionIndex(), 1, "The first question is numbered with 1");
     $this->assertEquals($controller->getQuestionCount(), 10, "The are 10 questions in the current exam");
+    $this->assertEquals($controller->getExam(), $this->exam);
+  }
+
+  public function testExamControlerReset() {
+    $this->approval_criteria->shouldReceive('reset')->once();
+    $this->exam->shouldReceive('resetAnswers')->once();
+
+    $timer = \Mockery::mock('mdagostino\MultipleChoiceExams\Timer\ExamTimerInterface');
+
+    $timer
+    ->shouldReceive('start')->twice()
+    ->shouldReceive('stillHasTime')->andReturn(TRUE);
+
+    $controller = new ExamWithTimeController($this->exam, $this->approval_criteria);
+    $controller->setTimer($timer);
+    $controller->startExam();
+
+    $controller->moveToNextQuestion();
+    $this->assertEquals($controller->getCurrentQuestionIndex(), 2, "You are now on question 2");
+
+    $controller->reStartExam();
+    $this->assertEquals($controller->getCurrentQuestionIndex(), 1, "You are now on question 1");
+
     $this->assertEquals($controller->getExam(), $this->exam);
   }
 

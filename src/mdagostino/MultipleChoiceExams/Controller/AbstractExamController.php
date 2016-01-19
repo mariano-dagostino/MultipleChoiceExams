@@ -33,14 +33,10 @@ abstract class AbstractExamController implements ExamControllerInterface {
     $this->total_questions = $this->getExam()->getQuestionCount();
   }
 
-  /**
-   * Re-Start the exam.
-   */
   public function reStartExam() {
     $this->startExam();
-    foreach ($this->getQuestions() as $question) {
-      $question->resetAnswer();
-    }
+    $this->getApprovalCriteria()->reset();
+    $this->getExam()->resetAnswers();
     return $this;
   }
 
@@ -93,6 +89,8 @@ abstract class AbstractExamController implements ExamControllerInterface {
   }
 
   abstract public function answerCurrentQuestion(array $answer);
+
+  abstract public function answerQuestion($id, array $answer);
 
   public function getCurrentQuestion() {
     return $this->getExam()->getQuestion($this->getCurrentQuestionIndex() - 1);

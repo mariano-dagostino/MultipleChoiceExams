@@ -45,12 +45,14 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
       // Expect question number 2 to be answered later.
       if ($i == 2) {
         $question->shouldReceive('answer')->once()->andReturn();
-        $question->shouldReceive('wasAnswered')->once()->andReturn(TRUE);
+        $question->shouldReceive('resetAnswer')->once()->andReturn();
+        $question->shouldReceive('wasAnswered')->twice()->andReturn(TRUE, FALSE);
       }
       else {
         // Other questions should not be answered
         $question->shouldReceive('answer')->times(0)->andReturn();
-        $question->shouldReceive('wasAnswered')->once()->andReturn(FALSE);
+        $question->shouldReceive('resetAnswer')->once()->andReturn();
+        $question->shouldReceive('wasAnswered')->twice()->andReturn(FALSE, FALSE);
       }
       $questions[] = $question;
     }
@@ -61,6 +63,9 @@ class ExamsTest extends \PHPUnit_Framework_TestCase {
 
     // Only one question should be answered
     $this->assertEquals($exam->questionsAnsweredCount(), 1);
+
+    $exam->resetAnswers();
+    $this->assertEquals($exam->questionsAnsweredCount(), 0);
   }
 
 

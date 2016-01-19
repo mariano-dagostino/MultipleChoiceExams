@@ -81,4 +81,11 @@ class Exam implements ExamInterface {
   public function getQuestionCount() {
     return count($this->getQuestions());
   }
+
+
+  public function resetAnswers() {
+    foreach ($this->getQuestions() as $question) {
+      $question->resetAnswer();
+    }
+  }
 }
