@@ -31,6 +31,11 @@ class ExamTimer implements ExamTimerInterface {
     return $this;
   }
 
+  public function setStartedAt($time) {
+    return $this->started_time = $time;
+    return $this;
+  }
+
   public function start() {
     return $this->started_time = $this->getTime();
   }
