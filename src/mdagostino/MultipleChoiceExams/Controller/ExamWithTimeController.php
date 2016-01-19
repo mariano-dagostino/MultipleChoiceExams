@@ -30,6 +30,7 @@ class ExamWithTimeController extends AbstractExamController implements ExamContr
 
   public function answerCurrentQuestion(array $answer) {
     $this->answerQuestion($this->getCurrentQuestionIndex() - 1, $answer);
+    return $this;
   }
 
   public function answerQuestion($id, array $answer) {
@@ -39,6 +40,7 @@ class ExamWithTimeController extends AbstractExamController implements ExamContr
     }
 
     $this->getExam()->answerQuestion($id, $answer);
+    return $this;
   }
 
 }
