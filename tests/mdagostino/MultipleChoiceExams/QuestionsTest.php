@@ -105,6 +105,10 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue($this->single_choice_question->hasTag('tag 3'));
   }
 
+  /**
+   * @expectedException \Exception
+   * @expectedExceptionMessage There is no method called inexistentMethod
+   */
   public function testMagicMethods() {
     $info = new QuestionInfo();
     $question = new Question($this->single_evaluator, $info);
@@ -113,6 +117,8 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($question->setChoices(['a' => 'A']), $question);
     $this->assertEquals($question->getTitle('test'), 'test');
     $this->assertEquals($question->getChoices(), ['a']);
+
+    $question->inexistentMethod();
   }
 
   public function testQuestionCorrect() {

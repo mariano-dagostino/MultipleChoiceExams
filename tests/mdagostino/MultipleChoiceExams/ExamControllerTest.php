@@ -58,6 +58,15 @@ class ExamControllerTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($controller->getExam(), $this->exam);
   }
 
+  /**
+   * @expectedException Exception
+   * @expectedExceptionMessage You must define a timer for ExamWithTimeController controllers
+   */
+  public function testNoTimerException() {
+    $controller = new ExamWithTimeController($this->exam, $this->approval_criteria);
+    $controller->startExam();
+  }
+
   public function testExamControlerReset() {
     $this->approval_criteria->shouldReceive('reset')->once();
     $this->exam->shouldReceive('resetAnswers')->once();

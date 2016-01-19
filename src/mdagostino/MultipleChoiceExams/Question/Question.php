@@ -131,7 +131,7 @@ class Question implements QuestionInterface {
     $method_to_call = array($this->info, $method);
 
     if (! is_callable($method_to_call, FALSE)) {
-      throw new \Exception("There is no method call " . $method);
+      throw new \Exception("There is no method called " . $method);
     }
 
     $return = call_user_func_array(array($this->info, $method), $arguments);
