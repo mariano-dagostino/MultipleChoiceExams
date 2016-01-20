@@ -83,11 +83,13 @@ class QuestionsTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($this->single_choice_question->getDescription(), 'What is the result of 1+1?');
     $this->assertEquals($this->single_choice_question->getChoicesDescriptions(), $this->single_choice_question_answers);
     $this->assertFalse($this->single_choice_question->wasAnswered());
+    $this->assertFalse($this->single_choice_question->isCorrect());
 
     $this->assertEquals($this->multiple_choice_question->getTitle(), 'Planets');
     $this->assertEquals($this->multiple_choice_question->getDescription(), 'What planets are between the Sun and the Earth?');
     $this->assertEquals($this->multiple_choice_question->getChoicesDescriptions(), $this->multiple_choice_question_answers);
     $this->assertFalse($this->multiple_choice_question->wasAnswered());
+    $this->assertFalse($this->multiple_choice_question->isCorrect());
   }
 
   public function testQuestionTagging() {
